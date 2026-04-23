@@ -4,6 +4,7 @@ import json
 import io
 import time
 import markdown
+import tiktoken
 import fitz  # PyMuPDF
 from groq import Groq
 from google.oauth2.service_account import Credentials
@@ -113,19 +114,62 @@ Voici le sujet d'examen intégral à résoudre et à prouver intégralement :
 {extracted_text}
 """
 
+# Calculate input tokens to strictly avoid TPM Rate Limit on Groq (8000 max for gpt-oss-120b)
 try:
+    encoding = tiktoken.get_encoding("cl100k_base")
+    input_token_count = len(encoding.encode(prompt))
+except Exception as e:
+    input_token_count = 1500 # rough estimate if tiktoken fails
+    
+safety_buffer = 150
+calculated_max_tokens = 8000 - input_token_count - safety_buffer
+
+if calculated_max_tokens < 1000:
+    print(f"Warning: The extracted PDF is too long. Capping output at 4000.")
+    calculated_max_tokens = 4000 
+
+answer_markdown = ""
+
+try:
+    print("Calling Groq with openai/gpt-oss-120b...")
     chat_completion = client.chat.completions.create(
         messages=[
             {"role": "system", "content": "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key."},
             {"role": "user", "content": prompt}
         ],
         model="openai/gpt-oss-120b",
-        temperature=0.1, # Extremely low temperature for analytical accuracy and calculation
-        max_tokens=6500
+        temperature=0.1,
+        max_tokens=calculated_max_tokens
     )
-    answer_markdown = chat_completion.choices[0].message.content
+    answer_markdown = chat_completion.choices[0].message.content or ""
 except Exception as e:
-    print(f"Error communicating with Groq API: {e}")
+    print(f"Error communicating with Groq API on gpt-oss-120b: {e}")
+
+# FALLBACK si gpt-oss-120b a retourné du vide ou a échoué (Groq safety filter bugs)
+if not answer_markdown.strip():
+    print("gpt-oss-120b returned empty response! Falling back to llama-3.3-70b-versatile...")
+    # Llama 3 70B a une limite de 12 000 TPM
+    calculated_max_tokens_llama = 12000 - input_token_count - safety_buffer
+    if calculated_max_tokens_llama < 1000:
+        calculated_max_tokens_llama = 4000
+        
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key."},
+                {"role": "user", "content": prompt}
+            ],
+            model="llama-3.3-70b-versatile",
+            temperature=0.1,
+            max_tokens=calculated_max_tokens_llama
+        )
+        answer_markdown = chat_completion.choices[0].message.content or ""
+    except Exception as e:
+        print(f"Error with fallback model: {e}")
+        sys.exit(1)
+
+if not answer_markdown.strip():
+    print("Error: Both models failed to generate content.")
     sys.exit(1)
 
 print("Processing output and generating HTML...")
