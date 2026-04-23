@@ -37,7 +37,7 @@ except Exception as e:
 
 print("Searching for 'Algebre Exam 2026.pdf' in Google Drive...")
 file_id = None
-max_retries = 30  # 30 retries * 30 seconds = 15 minutes max
+max_retries = 60  # 60 retries * 30 seconds = 30 minutes max
 retry_delay = 30
 
 for attempt in range(max_retries):
