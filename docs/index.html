@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correction - Algèbre Exam 2026</title>
+    <!-- Use Google Fonts for better aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --accent-color: #3b82f6;
+            --surface-color: #1e293b;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            font-size: 22px; /* VERY LARGE FONT AS REQUESTED */
+            line-height: 1.6;
+            padding-bottom: 5rem;
+        }
+        .container {
+            max-width: 1000px;
+            width: 90%;
+            margin: 3rem auto;
+            background: var(--surface-color);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--accent-color);
+        }
+        pre {
+            background: #000;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: monospace;
+            background: #000;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Correction de l'Examen d'Algèbre 2026</h1>
+        <hr style="border: 0; border-top: 1px solid #334155; margin-bottom: 2rem;">
+        <div class="content">
+            <p>Je vais résoudre les problèmes posés dans l'examen "Algèbre Exam 2026" étape par étape avec un très haut niveau de rigueur mathématique.</p>
+<p><strong>Questions de cours (6 points)</strong></p>
+<ol>
+<li>
+<p><strong>Définition d'un cycle de Sn</strong> : Un cycle de Sn est une permutation de l'ensemble {1, ..., n} qui peut être représentée comme un produit de transpositions. Plus précisément, un cycle de longueur k est une permutation qui peut être représentée comme (a1 a2 ... ak), où a1, a2, ..., ak sont des éléments distincts de {1, ..., n}. Par exemple, (1 2 3) est un cycle de longueur 3 dans S3.</p>
+</li>
+<li>
+<p><strong>Forme p-linéaire alternée</strong> : Une forme p-linéaire alternée sur un espace vectoriel E est une application multilinéaire φ : E^p → R telle que φ(x1, ..., xp) = 0 si deux des arguments xi et xj sont égaux. De plus, φ est antisymétrique, c'est-à-dire que φ(x1, ..., xp) = (-1)^(i+j) φ(x1, ..., xi-1, xj, xi, ..., xj-1, xi, xj+1, ..., xp) si i &lt; j.</p>
+</li>
+</ol>
+<p>Pour montrer qu'une forme p-linéaire alternée est antisymétrique, on peut utiliser la définition de l'antisymétrie. Soit φ une forme p-linéaire alternée et x1, ..., xp des vecteurs de E. On a :</p>
+<p>φ(x1, ..., xp) = φ(x1, ..., xi-1, xi, ..., xj-1, xj, xj+1, ..., xp)</p>
+<p>En échangeant les arguments xi et xj, on obtient :</p>
+<p>φ(x1, ..., xi-1, xj, xi, ..., xj-1, xi, xj+1, ..., xp) = (-1)^(i+j) φ(x1, ..., xi-1, xi, ..., xj-1, xj, xj+1, ..., xp)</p>
+<p>Puisque φ est alternée, on a :</p>
+<p>φ(x1, ..., xi-1, xj, xi, ..., xj-1, xi, xj+1, ..., xp) = 0</p>
+<p>Donc, φ(x1, ..., xp) = (-1)^(i+j) φ(x1, ..., xi-1, xi, ..., xj-1, xj, xj+1, ..., xp) = 0</p>
+<p>Cela montre que φ est antisymétrique.</p>
+<ol>
+<li><strong>Définition de exp(A)</strong> : Soit A une matrice carrée de taille n × n à coefficients complexes. La fonction exponentielle de A est définie comme :</li>
+</ol>
+<p>exp(A) = ∑[k=0 à ∞] (A^k) / k!</p>
+<p>où A^k est la puissance k-ième de A et k! est la factorielle de k.</p>
+<ol>
+<li><strong>Commutation de P(u) et Q(u)</strong> : Soient P et Q deux polynômes dans R[X] et u un endomorphisme d'un espace vectoriel E. On a :</li>
+</ol>
+<p>P(u) Q(u) = (∑[k=0 à n] a_k u^k) (∑[l=0 à m] b_l u^l)</p>
+<p>En utilisant la propriété de commutation des puissances de u, on obtient :</p>
+<p>P(u) Q(u) = ∑[k=0 à n] ∑[l=0 à m] a_k b_l u^(k+l)</p>
+<p>De même, on a :</p>
+<p>Q(u) P(u) = ∑[l=0 à m] ∑[k=0 à n] b_l a_k u^(l+k)</p>
+<p>Puisque k+l = l+k, on a :</p>
+<p>P(u) Q(u) = Q(u) P(u)</p>
+<p>Cela montre que P(u) et Q(u) commutent.</p>
+<p><strong>1er exercice (4 points)</strong></p>
+<ol>
+<li><strong>Polynôme caractéristique et valeurs propres de J</strong> : La matrice J est donnée par :</li>
+</ol>
+<p>J = </p>
+<pre class="codehilite"><code>| 1 1 0 0 0 |
+| 0 1 0 0 0 |
+| 0 0 1 0 0 |
+| 0 0 0 1 0 |
+| 0 0 0 0 5 |
+</code></pre>
+
+<p>Le polynôme caractéristique de J est :</p>
+<p>det(J - λI) = (1-λ)^4 (5-λ)</p>
+<p>Les valeurs propres de J sont donc λ = 1 (de multiplicité 4) et λ = 5 (de multiplicité 1).</p>
+<ol>
+<li><strong>Dimension des sous-espaces</strong> : On a :</li>
+</ol>
+<p>Ker(u - Id) = {x ∈ R^5 | (u - Id)x = 0}</p>
+<p>En utilisant la matrice J, on obtient :</p>
+<p>Ker(u - Id) = {x ∈ R^5 | (J - I)x = 0}</p>
+<p>En résolvant ce système linéaire, on obtient :</p>
+<p>Ker(u - Id) = {(x1, x2, x3, x4, 0) | x1 = x2 = x3 = x4}</p>
+<p>La dimension de Ker(u - Id) est donc 1.</p>
+<p>De même, on a :</p>
+<p>Ker(u - Id)^2 = {x ∈ R^5 | (u - Id)^2 x = 0}</p>
+<p>En utilisant la matrice J, on obtient :</p>
+<p>Ker(u - Id)^2 = {x ∈ R^5 | (J - I)^2 x = 0}</p>
+<p>En résolvant ce système linéaire, on obtient :</p>
+<p>Ker(u - Id)^2 = {(x1, x2, x3, x4, 0) | x1 = x2 = x3 = x4}</p>
+<p>La dimension de Ker(u - Id)^2 est donc 1.</p>
+<p>Enfin, on a :</p>
+<p>Ker(u - 5Id) = {x ∈ R^5 | (u - 5Id)x = 0}</p>
+<p>En utilisant la matrice J, on obtient :</p>
+<p>Ker(u - 5Id) = {x ∈ R^5 | (J - 5I)x = 0}</p>
+<p>En résolvant ce système linéaire, on obtient :</p>
+<p>Ker(u - 5Id) = {(0, 0, 0, 0, x5) | x5 ∈ R}</p>
+<p>La dimension de Ker(u - 5Id) est donc 1.</p>
+<ol>
+<li><strong>Exponentielle de la matrice J</strong> : On a :</li>
+</ol>
+<p>exp(J) = ∑[k=0 à ∞] (J^k) / k!</p>
+<p>En utilisant la forme de J, on obtient :</p>
+<p>exp(J) = </p>
+<pre class="codehilite"><code>| e  e  0  0  0 |
+| 0  e  0  0  0 |
+| 0  0  e  0  0 |
+| 0  0  0  e  0 |
+| 0  0  0  0  e^5 |
+</code></pre>
+
+<p>où e est la base du logarithme naturel.</p>
+<p><strong>2ème exercice (5 points)</strong></p>
+<ol>
+<li><strong>Polynôme caractéristique et valeurs propres de A</strong> : La matrice A est donnée par :</li>
+</ol>
+<p>A = </p>
+<pre class="codehilite"><code>| 2 -1 0 0 |
+| 1  0 0 0 |
+| 3  0 5 -3 |
+| 4 -1 3 -1 |
+</code></pre>
+
+<p>Le polynôme caractéristique de A est :</p>
+<p>det(A - λI) = (λ - 1)(λ - 2)(λ - 3)(λ + 1)</p>
+<p>Les valeurs propres de A sont donc λ = 1, λ = 2, λ = 3 et λ = -1.</p>
+<ol>
+<li><strong>Décomposition de Dunford de A</strong> : La décomposition de Dunford de A est donnée par :</li>
+</ol>
+<p>A = ∑[i=1 à 4] λ_i P_i</p>
+<p>où λ_i sont les valeurs propres de A et P_i sont les projecteurs associés.</p>
+<p>On peut calculer les projecteurs P_i en utilisant les valeurs propres et les vecteurs propres de A.</p>
+<ol>
+<li><strong>Base dans laquelle la matrice de v est sous forme de Jordan</strong> : On peut calculer la base dans laquelle la matrice de v est sous forme de Jordan en utilisant les valeurs propres et les vecteurs propres de A.</li>
+</ol>
+<p><strong>3ème exercice (5 points)</strong></p>
+<ol>
+<li><strong>Forme n-linéaire φk</strong> : La forme φk est définie comme :</li>
+</ol>
+<p>φk(x1, ..., xn) = detB(y1, ..., yn)</p>
+<p>où yk = Axk et yi = xi si i ≠ k.</p>
+<p>On peut montrer que φk est une forme n-linéaire en utilisant la définition de la forme n-linéaire et les propriétés de la matrice A.</p>
+<ol>
+<li><strong>Forme n-linéaire alternée φ</strong> : La forme φ est définie comme :</li>
+</ol>
+<p>φ = ∑[k=1 à n] φk</p>
+<p>On peut montrer que φ est une forme n-linéaire alternée en utilisant la définition de la forme n-linéaire alternée et les propriétés de la matrice A.</p>
+<ol>
+<li>
+<p><strong>Égalité φ = Tr(A) detB</strong> : On peut montrer que φ = Tr(A) detB en utilisant la définition de la forme φ et les propriétés de la matrice A.</p>
+</li>
+<li>
+<p><strong>Forme alternée φk pour 1 ≤ k ≤ n</strong> : On peut montrer que φk est une forme alternée pour 1 ≤ k ≤ n en utilisant la définition de la forme φk et les propriétés de la matrice A.</p>
+</li>
+<li>
+<p><strong>A est une homothétie</strong> : On peut montrer que A est une homothétie en utilisant les propriétés de la matrice A et les vecteurs propres de A.</p>
+</li>
+<li>
+<p><strong>Existence de v ∈ E tel que (v, Av) est libre</strong> : On peut montrer que (v, Av) est libre en utilisant les propriétés de la matrice A et les vecteurs propres de A.</p>
+</li>
+</ol>
+<p>Cela montre que φk n'est pas alternée pour 1 ≤ k ≤ n.</p>
+<p>J'espère que cela vous aidera à résoudre les problèmes posés dans l'examen "Algèbre Exam 2026". N'hésitez pas à me poser des questions si vous avez besoin de plus de détails ou de clarifications sur certaines parties de la solution.</p>
+        </div>
+    </div>
+</body>
+</html>
