@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import io
+import time
 import markdown
 import fitz  # PyMuPDF
 from groq import Groq
@@ -35,21 +36,30 @@ except Exception as e:
     sys.exit(1)
 
 print("Searching for 'Algebre Exam 2026.pdf' in Google Drive...")
-try:
-    # Search for the exact file name
-    query = "name = 'Algebre Exam 2026.pdf' and mimeType = 'application/pdf'"
-    results = drive_service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
-    items = results.get('files', [])
-    
-    if not items:
-        print("Could not find a file named precisely 'Algebre Exam 2026.pdf' shared with the Service Account.")
-        sys.exit(1)
+file_id = None
+max_retries = 30  # 30 retries * 30 seconds = 15 minutes max
+retry_delay = 30
+
+for attempt in range(max_retries):
+    try:
+        # Search for the exact file name
+        query = "name = 'Algebre Exam 2026.pdf' and mimeType = 'application/pdf'"
+        results = drive_service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
+        items = results.get('files', [])
         
-    file_id = items[0]['id']
-    print(f"Found file! ID: {file_id}")
-    
-except Exception as e:
-    print(f"Error accessing Google Drive: {e}")
+        if items:
+            file_id = items[0]['id']
+            print(f"Trouvé ! ID: {file_id}")
+            break
+        else:
+            print(f"Fichier introuvable, nouvelle tentative dans {retry_delay} secondes... ({attempt+1}/{max_retries})")
+            time.sleep(retry_delay)
+    except Exception as e:
+        print(f"Failed to fetch from Google Drive, retrying: {e}")
+        time.sleep(retry_delay)
+
+if not file_id:
+    print("Le fichier 'Algebre Exam 2026.pdf' n'est pas apparu après 15 minutes d'attente.")
     sys.exit(1)
 
 print("Downloading the PDF...")
@@ -109,7 +119,7 @@ try:
         ],
         model="llama-3.3-70b-versatile",
         temperature=0.2, # Low temperature for analytical accuracy
-        max_tokens=6000
+        max_tokens=32768
     )
     answer_markdown = chat_completion.choices[0].message.content
 except Exception as e:
