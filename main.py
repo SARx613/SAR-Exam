@@ -104,13 +104,12 @@ prompt = f"""
 Tu es un brillant professeur de mathématiques à l'université, et tu dois produire la CORRECTION OFFICIELLE PARFAITE (visant la note de 20/20) d'un examen de 3ème année de Licence (L3) d'Algèbre.
 
 RÈGLES ABSOLUES :
-1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z en produisant le corrigé-type officiel et final.
-2. NE SAUTE AUCUNE QUESTION et ne résume JAMAIS les calculs avec des phrases comme "On peut montrer que". Tu dois OBLIGATOIREMENT détailler 100% des démonstrations et des étapes de calcul (décompositions de Dunford, valeurs propres, exponentielles de matrice, déterminants, etc).
-3. Le texte ci-dessous a été extrait d'un PDF, déduis logiquement les symboles mathématiques manquants et corrige naturellement de toi-même les erreurs flagrantes liées à l'ordinateur (OCR).
-4. Fournis une rigueur mathématique implacable, sans aucune approximation.
-5. UTILISE UNIQUEMENT LE FORMAT LATEX POUR LES MATHÉMATIQUES. Encadre les équations en ligne avec un simple symbole dollar ($...$) et les blocs d'équations avec un double symbole dollar ($$...$$).
+1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z en produisant le corrigé-type officiel et final complet pour tous les exercices.
+2. NE SAUTE AUCUNE QUESTION et ne résume JAMAIS les calculs.
+3. Le texte ci-dessous a été extrait d'un PDF, déduis logiquement les symboles mathématiques manquants.
+4. RÈGLE CRUCIALE DE FORMATAGE LATEX : Bannis totalement les symboles d'échappement \(, \), \[, \]. Ils vont casser mon site web. Tu dois OBLIGATOIREMENT encadrer les équations en ligne d'un simple symbole dollar ($x=1$) et les équations en bloc d'un double symbole dollar ($$y=2$$).
 
-Voici le sujet d'examen intégral à résoudre et à prouver intégralement :
+Voici le sujet d'examen intégral à résoudre de la 1ère à la toute dernière ligne :
 
 {extracted_text}
 """
@@ -123,54 +122,70 @@ except Exception as e:
     input_token_count = 1500 # rough estimate if tiktoken fails
     
 safety_buffer = 150
-calculated_max_tokens = 8000 - input_token_count - safety_buffer
-
-if calculated_max_tokens < 1000:
-    print(f"Warning: The extracted PDF is too long. Capping output at 4000.")
-    calculated_max_tokens = 4000 
-
 answer_markdown = ""
 
-try:
-    print("Calling Groq with openai/gpt-oss-120b...")
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key."},
-            {"role": "user", "content": prompt}
-        ],
-        model="openai/gpt-oss-120b",
-        temperature=0.1,
-        max_tokens=calculated_max_tokens
-    )
-    answer_markdown = chat_completion.choices[0].message.content or ""
-except Exception as e:
-    print(f"Error communicating with Groq API on gpt-oss-120b: {e}")
+system_role = "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key. Crucially, use ONLY $ and $$ for math delimiters, NEVER \( or \[."
 
-# FALLBACK si gpt-oss-120b a retourné du vide ou a échoué (Groq safety filter bugs)
-if not answer_markdown.strip():
-    print("gpt-oss-120b returned empty response! Falling back to llama-3.3-70b-versatile...")
-    # Llama 3 70B a une limite de 12 000 TPM
-    calculated_max_tokens_llama = 12000 - input_token_count - safety_buffer
-    if calculated_max_tokens_llama < 1000:
-        calculated_max_tokens_llama = 4000
+# Validation Loop System
+for attempt in range(1, 4):
+    if attempt <= 2:
+        model_name = "openai/gpt-oss-120b"
+        max_toks = 8000 - input_token_count - safety_buffer
+    else:
+        model_name = "llama-3.3-70b-versatile" # 12K TPM limit fallback
+        max_toks = 12000 - input_token_count - safety_buffer
         
+    if max_toks < 1000: max_toks = 4000
+    
+    print(f"--- Attempt {attempt}: Generating correction with {model_name} (max_tokens={max_toks}) ---")
     try:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key."},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.3-70b-versatile",
+        resp = client.chat.completions.create(
+            messages=[{"role": "system", "content": system_role}, {"role": "user", "content": prompt}],
+            model=model_name,
             temperature=0.1,
-            max_tokens=calculated_max_tokens_llama
+            max_tokens=max_toks
         )
-        answer_markdown = chat_completion.choices[0].message.content or ""
-    except Exception as e:
-        print(f"Error with fallback model: {e}")
-        sys.exit(1)
+        current_answer = resp.choices[0].message.content or ""
+        
+        # Validation checks
+        if len(current_answer) < 3000:
+            print("Output too short! It was likely cut off violently. Rejecting this output.")
+            continue
+            
+        print("Model finished generation. Launching Llama-3.1-8b validator to check output quality...")
+        validator_prompt = f"""
+You are an automated quality assurance bot. Read the following mathematical exam correction.
+Your job is to check for two critical failures:
+1. Did the text get abruptly cut off at the end mid-sentence, mid-equation, or entirely fail to complete the exam?
+2. Does the text heavily use `\\[` or `\\(` instead of `$$` and `$` ?
 
-if not answer_markdown.strip():
-    print("Error: Both models failed to generate content.")
+If ANY of these failures exist, output ONLY the word "NO".
+If the document appears perfectly completed to the end and follows the formatting, output ONLY the word "YES".
+
+Document to check:
+{current_answer}
+"""
+        val_resp = client.chat.completions.create(
+            messages=[{"role": "user", "content": validator_prompt}],
+            model="llama-3.1-8b-instant",
+            temperature=0.1,
+            max_tokens=20
+        )
+        val_decision = val_resp.choices[0].message.content.strip().upper()
+        
+        if "YES" in val_decision:
+            print("Validation PASSED! The output is clean and completed.")
+            answer_markdown = current_answer
+            break
+        else:
+            print("Validation FAILED (incomplete, cut off, or wrong LaTeX delimiters). Trying again...")
+            answer_markdown = current_answer # Keep it just in case next attempts fail worse
+            
+    except Exception as e:
+        print(f"Error during attempt {attempt}: {e}")
+
+if not answer_markdown:
+    print("Fatal Error: All models completely failed to generate any response.")
     sys.exit(1)
 
 print("Processing output and generating HTML...")
