@@ -154,8 +154,10 @@ for loop_index in range(max_iterations):
             max_tokens=calc_max_tokens
         )
         new_text = resp.choices[0].message.content or ""
+        if not new_text.strip():
+            raise Exception("GPT-120B silently returned an empty string.")
     except Exception as e:
-        print(f"GPT error: {e}. Falling back to llama-70b.")
+        print(f"GPT error or empty response: {e}. Falling back to llama-70b.")
         try:
              resp = client.chat.completions.create(
                 messages=[{"role": "system", "content": system_role}, {"role": "user", "content": current_prompt}],
@@ -164,8 +166,11 @@ for loop_index in range(max_iterations):
                 max_tokens=12000 - input_token_count - safety_buffer
              )
              new_text = resp.choices[0].message.content or ""
+             if not new_text.strip():
+                 print("Fallback Llama-70b ALSO returned empty string. Breaking.")
+                 break
         except Exception as e2:
-             print(f"Fallback also failed: {e2}")
+             print(f"Fallback failed: {e2}")
              break
              
     full_answer += "\n" + new_text
