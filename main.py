@@ -104,12 +104,12 @@ prompt = f"""
 Tu es un brillant professeur de mathématiques à l'université, et tu dois produire la CORRECTION OFFICIELLE PARFAITE (visant la note de 20/20) d'un examen de 3ème année de Licence (L3) d'Algèbre.
 
 RÈGLES ABSOLUES :
-1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z en produisant le corrigé-type officiel et final complet pour tous les exercices.
-2. NE SAUTE AUCUNE QUESTION et ne résume JAMAIS les calculs.
-3. Le texte ci-dessous a été extrait d'un PDF, déduis logiquement les symboles mathématiques manquants.
-4. RÈGLE CRUCIALE DE FORMATAGE LATEX : Tu dois impérativement utiliser le formatage LaTeX natif complet pour toutes les mathématiques (\( \), \[ \], $$, $, \begin{{pmatrix}}, etc). Les équations doivent être parfaitement rédigées.
+1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z.
+2. AUCUNE FAINÉANTISE. Interdiction formelle d'utiliser les expressions "il suffit de", "on peut montrer que", ou "cela peut être fait". TU DOIS EFFECTUER LA PREUVE EN ENTIER SOUS MES YEUX !
+3. Aucun calcul magique. Pour les calculs de noyau, valeurs propres, décompositions de Dunford, etc., tu dois écrire la matrice, écrire le système linéaire, et le résoudre étape par étape sans sauter d'étape.
+4. RÈGLE CRUCIALE DE FORMATAGE LATEX : Tu dois impérativement utiliser le formatage LaTeX natif complet pour toutes les mathématiques. Les équations doivent être parfaitement rédigées.
 
-Voici le sujet d'examen intégral à résoudre de la 1ère à la toute dernière ligne :
+Voici le sujet d'examen intégral à résoudre de la 1ère à la toute dernière ligne avec une rigueur absolue :
 
 {extracted_text}
 """
@@ -124,7 +124,7 @@ except Exception as e:
 safety_buffer = 150
 answer_markdown = ""
 
-system_role = "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key. Crucially, use advanced LaTeX mathematically."
+system_role = "Tu es un professeur de mathématiques d'université intraitable et hyper-rigoureux. Tu dois fournir une copie corrigée d'excellence. INTERDICTION D'ÊTRE PARESSEUX : tu dois prouver absolument tout ce que tu affirmes et écrire tous les calculs matriciels intermédiaires. Interdiction d'utiliser les formules 'on peut voir que' ou 'il est facile de montrer'. Utilise LaTeX pour tout le texte mathématique."
 
 full_answer = ""
 current_instruction = "Résous l'intégralité de l'examen de la première à la dernière question."
@@ -229,7 +229,11 @@ if not answer_markdown.strip():
     sys.exit(1)
 
 print("Processing output and generating HTML...")
-html_content = markdown.markdown(answer_markdown, extensions=['extra', 'codehilite', 'mdx_math'])
+html_content = markdown.markdown(
+    answer_markdown, 
+    extensions=['extra', 'codehilite', 'mdx_math'],
+    extension_configs={'mdx_math': {'enable_dollar_delimiter': True}}
+)
 
 # Build final webpage structure with font-size: 22px
 html_page = f"""<!DOCTYPE html>
@@ -239,6 +243,15 @@ html_page = f"""<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Correction - Algèbre Exam 2026</title>
 
+    <!-- Configure MathJax correctly BEFORE loading it -->
+    <script>
+      MathJax = {{
+        tex: {{
+          inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+          displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']]
+        }}
+      }};
+    </script>
     <!-- MathJax for rendering LaTeX math formulas -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
