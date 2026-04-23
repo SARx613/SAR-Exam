@@ -119,9 +119,9 @@ try:
             {"role": "system", "content": "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key."},
             {"role": "user", "content": prompt}
         ],
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-120b",
         temperature=0.1, # Extremely low temperature for analytical accuracy and calculation
-        max_tokens=10000
+        max_tokens=6500
     )
     answer_markdown = chat_completion.choices[0].message.content
 except Exception as e:
