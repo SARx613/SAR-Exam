@@ -8,11 +8,17 @@ on:
   schedule:
     - cron: '0 8 * * *' # Run every day at 8:00 AM UTC
 
+# Permissions are strictly required for GitHub Pages upload to work
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -34,10 +40,14 @@ jobs:
         run: |
           python main.py
 
-      - name: Commit and Push docs/ directory
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add docs/index.html
-          git commit -m "Update Maths Exam Correction HTML" || echo "No changes to commit"
-          git push origin main
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
