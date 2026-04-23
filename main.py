@@ -243,18 +243,17 @@ html_page = f"""<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Correction - Algèbre Exam 2026</title>
 
-    <!-- Configure MathJax correctly BEFORE loading it -->
-    <script>
-      MathJax = {{
-        tex: {{
-          inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
-          displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']]
-        }}
-      }};
+    <!-- Configure MathJax v2.7.7 for robust compatibility with mdx_math -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$'], ['\\(','\\)']],
+                displayMath: [['$$','$$'], ['\\[','\\]']]
+            }
+        });
     </script>
-    <!-- MathJax for rendering LaTeX math formulas -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
     <!-- Use Google Fonts for better aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
