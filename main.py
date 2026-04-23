@@ -98,15 +98,24 @@ print("Successfully extracted text. Sending to Groq...")
 # Initialize Groq client
 client = Groq(api_key=GROQ_API_KEY)
 
-# Generate an effective prompt requesting L3 Math level assistance
+# Generate an effective prompt requesting L3 Math level assistance and rigorous grading
 prompt = f"""
-Tu es un professeur de mathématiques expert et hautement qualifié, spécialisé dans l'enseignement universitaire en 3ème année de Licence (L3).
-Voici ci-dessous le contenu textuel extrait d'un examen PDF nommé "Algèbre Exam 2026". 
+Tu es un professeur de mathématiques expert, extrêmement exigeant et rigoureux, spécialisé dans l'enseignement universitaire (Licence L2/L3).
+Le texte ci-dessous a été extrait d'une copie d'examen d'un étudiant (PDF nommé "Algèbre Exam 2026"). 
 
-ATTENTION: Le texte ayant été extrait d'un PDF, il est possible que certaines équations ou symboles mathématiques aient de légères erreurs de formatage ou d'OCR. 
-Utilise ta grande expertise pour déduire le sens exact des équations, résoudre les problèmes posés, et fournir des réponses claires, détaillées, étape par étape avec un très haut niveau de rigueur mathématique. Formate toutes les mathématiques de manière propre pour qu'elles soient lisibles.
+Ton objectif est de CORRIGER cette copie de manière stricte, en t'inspirant de ce ton :
+"Je vais corriger ton travail avec le niveau d'exigence attendu. Je me dois d'être tout à fait franc : une grande partie est éludée, et il y a des erreurs. Voici ta note finale estimée : X / 20. Ne te décourage pas. Voici la correction détaillée..."
 
-Voici l'examen :
+Consignes de correction :
+1. Donne une NOTE GLOBALE sur 20 au début du rendu.
+2. Dresse un bilan franc du travail (bonnes choses, erreurs graves, méthodes absentes).
+3. Corrige CHAQUE question une par une en attribuant les points (ex: "Question 1 (0 / 2 points)").
+4. Ne te contente pas de dire que c'est faux : tu DOIS fournir la VRAIE correction détaillée avec des preuves mathématiques rigoureuses (en cas d'erreur de la part de l'étudiant).
+5. Garde un ton académique, sans concession sur la rigueur logique. Rappelle que "On peut montrer que..." ne rapporte aucun point s'il n'y a pas de démonstration.
+6. Le texte provenant d'un OCR, corrige silencieusement les petites fautes de scan dans les formules avant de les juger.
+7. Formate toutes les mathématiques de manière propre (Markdown/LaTeX lisible pour le web).
+
+Voici la copie de l'étudiant telle qu'elle a été lue par l'ordinateur :
 
 {extracted_text}
 """
