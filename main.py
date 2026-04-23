@@ -98,24 +98,17 @@ print("Successfully extracted text. Sending to Groq...")
 # Initialize Groq client
 client = Groq(api_key=GROQ_API_KEY)
 
-# Generate an effective prompt requesting L3 Math level assistance and rigorous grading
+# Generate an effective prompt requesting L3 Math level assistance
 prompt = f"""
-Tu es un professeur de mathématiques expert, extrêmement exigeant et rigoureux, spécialisé dans l'enseignement universitaire (Licence L2/L3).
-Le texte ci-dessous a été extrait d'une copie d'examen d'un étudiant (PDF nommé "Algèbre Exam 2026"). 
+Tu es un brillant professeur de mathématiques à l'université, et tu dois produire la CORRECTION OFFICIELLE PARFAITE (visant la note de 20/20) d'un examen de 3ème année de Licence (L3) d'Algèbre.
 
-Ton objectif est de CORRIGER cette copie de manière stricte, en t'inspirant de ce ton :
-"Je vais corriger ton travail avec le niveau d'exigence attendu. Je me dois d'être tout à fait franc : une grande partie est éludée, et il y a des erreurs. Voici ta note finale estimée : X / 20. Ne te décourage pas. Voici la correction détaillée..."
+RÈGLES ABSOLUES :
+1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z en produisant le corrigé-type officiel et final.
+2. NE SAUTE AUCUNE QUESTION et ne résume JAMAIS les calculs avec des phrases comme "On peut montrer que". Tu dois OBLIGATOIREMENT détailler 100% des démonstrations et des étapes de calcul (décompositions de Dunford, valeurs propres, exponentielles de matrice, déterminants, etc).
+3. Le texte ci-dessous a été extrait d'un PDF, déduis logiquement les symboles mathématiques manquants et corrige naturellement de toi-même les erreurs flagrantes liées à l'ordinateur (OCR).
+4. Fournis une rigueur mathématique implacable, sans aucune approximation. 
 
-Consignes de correction :
-1. Donne une NOTE GLOBALE sur 20 au début du rendu.
-2. Dresse un bilan franc du travail (bonnes choses, erreurs graves, méthodes absentes).
-3. Corrige CHAQUE question une par une en attribuant les points (ex: "Question 1 (0 / 2 points)").
-4. Ne te contente pas de dire que c'est faux : tu DOIS fournir la VRAIE correction détaillée avec des preuves mathématiques rigoureuses (en cas d'erreur de la part de l'étudiant).
-5. Garde un ton académique, sans concession sur la rigueur logique. Rappelle que "On peut montrer que..." ne rapporte aucun point s'il n'y a pas de démonstration.
-6. Le texte provenant d'un OCR, corrige silencieusement les petites fautes de scan dans les formules avant de les juger.
-7. Formate toutes les mathématiques de manière propre (Markdown/LaTeX lisible pour le web).
-
-Voici la copie de l'étudiant telle qu'elle a été lue par l'ordinateur :
+Voici le sujet d'examen intégral à résoudre et à prouver intégralement :
 
 {extracted_text}
 """
@@ -123,11 +116,11 @@ Voici la copie de l'étudiant telle qu'elle a été lue par l'ordinateur :
 try:
     chat_completion = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "You are a helpful, brilliant mathematics professor."},
+            {"role": "system", "content": "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key."},
             {"role": "user", "content": prompt}
         ],
-        model="llama-3.3-70b-versatile",
-        temperature=0.2, # Low temperature for analytical accuracy
+        model="openai/gpt-oss-120b",
+        temperature=0.1, # Extremely low temperature for analytical accuracy and calculation
         max_tokens=32768
     )
     answer_markdown = chat_completion.choices[0].message.content
@@ -166,7 +159,7 @@ html_page = f"""<!DOCTYPE html>
             font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
-            font-size: 22px; /* VERY LARGE FONT AS REQUESTED */
+            font-size: 24px; /* VERY LARGE FONT AS REQUESTED */
             line-height: 1.6;
             padding-bottom: 5rem;
         }}
