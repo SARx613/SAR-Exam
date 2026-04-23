@@ -274,7 +274,7 @@ html_page = f"""<!DOCTYPE html>
             font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
-            font-size: 24px; /* VERY LARGE FONT AS REQUESTED */
+            font-size: 26px; /* VERY LARGE FONT AS REQUESTED */
             line-height: 1.6;
             padding-bottom: 5rem;
         }}
