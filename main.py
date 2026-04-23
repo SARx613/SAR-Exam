@@ -121,7 +121,7 @@ try:
         ],
         model="openai/gpt-oss-120b",
         temperature=0.1, # Extremely low temperature for analytical accuracy and calculation
-        max_tokens=32768
+        max_tokens=8000
     )
     answer_markdown = chat_completion.choices[0].message.content
 except Exception as e:
