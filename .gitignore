@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+downloaded_exam.pdf
+.pyicloud/
+session.tar.gz
+session_base64.txt
