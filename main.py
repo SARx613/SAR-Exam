@@ -107,7 +107,8 @@ RÈGLES ABSOLUES :
 1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z en produisant le corrigé-type officiel et final.
 2. NE SAUTE AUCUNE QUESTION et ne résume JAMAIS les calculs avec des phrases comme "On peut montrer que". Tu dois OBLIGATOIREMENT détailler 100% des démonstrations et des étapes de calcul (décompositions de Dunford, valeurs propres, exponentielles de matrice, déterminants, etc).
 3. Le texte ci-dessous a été extrait d'un PDF, déduis logiquement les symboles mathématiques manquants et corrige naturellement de toi-même les erreurs flagrantes liées à l'ordinateur (OCR).
-4. Fournis une rigueur mathématique implacable, sans aucune approximation. 
+4. Fournis une rigueur mathématique implacable, sans aucune approximation.
+5. UTILISE UNIQUEMENT LE FORMAT LATEX POUR LES MATHÉMATIQUES. Encadre les équations en ligne avec un simple symbole dollar ($...$) et les blocs d'équations avec un double symbole dollar ($$...$$).
 
 Voici le sujet d'examen intégral à résoudre et à prouver intégralement :
 
@@ -184,6 +185,11 @@ html_page = f"""<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Correction - Algèbre Exam 2026</title>
+
+    <!-- MathJax for rendering LaTeX math formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <!-- Use Google Fonts for better aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
