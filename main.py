@@ -107,7 +107,7 @@ RÈGLES ABSOLUES :
 1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z en produisant le corrigé-type officiel et final complet pour tous les exercices.
 2. NE SAUTE AUCUNE QUESTION et ne résume JAMAIS les calculs.
 3. Le texte ci-dessous a été extrait d'un PDF, déduis logiquement les symboles mathématiques manquants.
-4. RÈGLE CRUCIALE DE FORMATAGE LATEX : Bannis totalement les symboles d'échappement \(, \), \[, \]. Ils vont casser mon site web. Tu dois OBLIGATOIREMENT encadrer les équations en ligne d'un simple symbole dollar ($x=1$) et les équations en bloc d'un double symbole dollar ($$y=2$$).
+4. RÈGLE CRUCIALE DE FORMATAGE LATEX : Tu dois impérativement utiliser le formatage LaTeX natif complet pour toutes les mathématiques (\( \), \[ \], $$, $, \begin{{pmatrix}}, etc). Les équations doivent être parfaitement rédigées.
 
 Voici le sujet d'examen intégral à résoudre de la 1ère à la toute dernière ligne :
 
@@ -124,7 +124,7 @@ except Exception as e:
 safety_buffer = 150
 answer_markdown = ""
 
-system_role = "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key. Crucially, use ONLY $ and $$ for math delimiters, NEVER \( or \[."
+system_role = "You are a brilliant, meticulous university mathematics professor. You solve exams perfectly, providing full calculations step by step without skipping anything. You never act as a grader correcting an ongoing copy, you only produce the absolute master solution key. Crucially, use advanced LaTeX mathematically."
 
 # Validation Loop System
 for attempt in range(1, 4):
@@ -152,22 +152,21 @@ for attempt in range(1, 4):
             print("Output too short! It was likely cut off violently. Rejecting this output.")
             continue
             
-        print("Model finished generation. Launching Llama-3.1-8b validator to check output quality...")
+        print("Model finished generation. Launching Llama-3.3-70B validator to check output quality...")
         validator_prompt = f"""
 You are an automated quality assurance bot. Read the following mathematical exam correction.
-Your job is to check for two critical failures:
-1. Did the text get abruptly cut off at the end mid-sentence, mid-equation, or entirely fail to complete the exam?
-2. Does the text heavily use `\\[` or `\\(` instead of `$$` and `$` ?
+Your job is to check for a critical failure:
+Did the text get abruptly cut off at the very end mid-sentence, mid-equation, mid-matrix, or entirely fail to complete the exam? (For example, ending in `\\begin{{pmatrix}}1&` or `+f(\\dots` is a catastrophic cutoff).
 
-If ANY of these failures exist, output ONLY the word "NO".
-If the document appears perfectly completed to the end and follows the formatting, output ONLY the word "YES".
+If you detect ANY cutoff or incompleteness, output ONLY the word "NO".
+If the document appears perfectly completed to the end and concludes naturally, output ONLY the word "YES".
 
 Document to check:
 {current_answer}
 """
         val_resp = client.chat.completions.create(
             messages=[{"role": "user", "content": validator_prompt}],
-            model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",
             temperature=0.1,
             max_tokens=20
         )
@@ -189,9 +188,7 @@ if not answer_markdown:
     sys.exit(1)
 
 print("Processing output and generating HTML...")
-
-# Convert Markdown to HTML
-html_content = markdown.markdown(answer_markdown, extensions=['extra', 'codehilite'])
+html_content = markdown.markdown(answer_markdown, extensions=['extra', 'codehilite', 'mdx_math'])
 
 # Build final webpage structure with font-size: 22px
 html_page = f"""<!DOCTYPE html>

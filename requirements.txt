@@ -5,3 +5,4 @@ PyMuPDF
 markdown
 httpx<0.28.0
 tiktoken
+python-markdown-math
