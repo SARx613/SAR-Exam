@@ -36,7 +36,15 @@ except Exception as e:
     print(f"Failed to authenticate with Google Drive: {e}")
     sys.exit(1)
 
-print("Searching for 'Algebre Exam 2026.pdf' in Google Drive...")
+# Read the target filename from exam_filename.txt
+target_filename = "Algebre Exam 2026.pdf" # Fallback
+if os.path.exists("exam_filename.txt"):
+    with open("exam_filename.txt", "r", encoding="utf-8") as f:
+        content = f.read().strip()
+        if content:
+            target_filename = content
+
+print(f"Searching for '{target_filename}' in Google Drive...")
 file_id = None
 max_retries = 60  # 60 retries * 30 seconds = 30 minutes max
 retry_delay = 30
@@ -44,7 +52,7 @@ retry_delay = 30
 for attempt in range(max_retries):
     try:
         # Search for the exact file name
-        query = "name = 'Algebre Exam 2026.pdf' and mimeType = 'application/pdf'"
+        query = f"name = '{target_filename}' and mimeType = 'application/pdf'"
         results = drive_service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
         items = results.get('files', [])
         
@@ -60,7 +68,7 @@ for attempt in range(max_retries):
         time.sleep(retry_delay)
 
 if not file_id:
-    print("Le fichier 'Algebre Exam 2026.pdf' n'est pas apparu après 15 minutes d'attente.")
+    print(f"Le fichier '{target_filename}' n'est pas apparu après 15 minutes d'attente.")
     sys.exit(1)
 
 print("Downloading the PDF...")
@@ -235,13 +243,16 @@ html_content = markdown.markdown(
     extension_configs={'mdx_math': {'enable_dollar_delimiter': True}}
 )
 
+# Extract title from target filename
+display_title = target_filename.replace('.pdf', '')
+
 # Build final webpage structure with font-size: 22px
 html_page = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Correction - Algèbre Exam 2026</title>
+    <title>Correction - {display_title}</title>
 
     <!-- Configure MathJax v2.7.7 for robust compatibility with mdx_math -->
     <script type="text/x-mathjax-config">
@@ -307,7 +318,7 @@ html_page = f"""<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
-        <h1>Correction de l'Examen d'Algèbre 2026</h1>
+        <h1>Correction de l'examen {display_title}</h1>
         <hr style="border: 0; border-top: 1px solid #334155; margin-bottom: 2rem;">
         <div class="content">
             {html_content}
