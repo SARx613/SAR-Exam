@@ -281,7 +281,7 @@ html_page = f"""<!DOCTYPE html>
         .container {{
             max-width: 1000px;
             width: 90%;
-            margin: 3rem auto;
+            margin: 3rem 3rem;
             background: var(--surface-color);
             padding: 3rem;
             border-radius: 16px;
