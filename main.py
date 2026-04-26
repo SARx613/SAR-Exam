@@ -115,8 +115,13 @@ RÈGLES ABSOLUES :
 1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z.
 2. AUCUNE FAINÉANTISE. Interdiction formelle d'utiliser les expressions "il suffit de", "on peut montrer que", ou "cela peut être fait". TU DOIS EFFECTUER LA PREUVE EN ENTIER SOUS MES YEUX !
 3. Aucun calcul magique. Pour les calculs de noyau, valeurs propres, décompositions de Dunford, etc., tu dois écrire la matrice, écrire le système linéaire, et le résoudre étape par étape sans sauter d'étape.
-4. RÈGLE CRUCIALE DE FORMATAGE LATEX : Tu dois impérativement utiliser le formatage LaTeX natif complet pour toutes les mathématiques. Les équations doivent être parfaitement rédigées.
-
+4. RÈGLE CRUCIALE DE FORMATAGE (MARKDOWN + MATHJAX) : 
+   - La structure du document DOIT être en Markdown strict (utilise '#', '##' pour les titres, des tirets '-' ou des '1.' pour les listes, '**gras**').
+   - INTERDICTION ABSOLUE d'utiliser les commandes structurelles LaTeX telles que \section, \subsection, \textbf, \begin{enumerate}, \item, etc.
+   - Utilise LaTeX *uniquement* pour les expressions mathématiques.
+   - Les équations en ligne doivent être encadrées par `$` (exemple: $x^2 + 1$).
+   - Les équations hors texte doivent être centrées et encadrées par `$$` (exemple: $$ \int f(x) dx $$).
+   - N'indente JAMAIS le début de tes lignes avec des espaces (cela crée des blocs de code qui cassent le rendu mathématique).
 Voici le sujet d'examen intégral à résoudre de la 1ère à la toute dernière ligne avec une rigueur absolue :
 
 {extracted_text}
@@ -132,11 +137,10 @@ except Exception as e:
 safety_buffer = 150
 answer_markdown = ""
 
-system_role = "Tu es un professeur de mathématiques d'université intraitable et hyper-rigoureux. Tu dois fournir une copie corrigée d'excellence. INTERDICTION D'ÊTRE PARESSEUX : tu dois prouver absolument tout ce que tu affirmes et écrire tous les calculs matriciels intermédiaires. Interdiction d'utiliser les formules 'on peut voir que' ou 'il est facile de montrer'. Utilise LaTeX pour tout le texte mathématique."
-
+system_role = "Tu es un professeur de mathématiques d'université intraitable et hyper-rigoureux. Tu dois fournir une copie corrigée d'excellence. INTERDICTION D'ÊTRE PARESSEUX : tu dois prouver absolument tout ce que tu affirmes et écrire tous les calculs matriciels intermédiaires. Interdiction d'utiliser les formules 'on peut voir que' ou 'il est facile de montrer'. Utilise exclusivement le Markdown pour la structure (titres, listes) et LaTeX ($ et $$) pour les mathématiques. N'utilise jamais les commandes \\section ou \\begin{enumerate}. N'indente pas tes lignes."
 full_answer = ""
 current_instruction = "Résous l'intégralité de l'examen de la première à la dernière question."
-max_iterations = 4
+max_iterations = 8
 
 for loop_index in range(max_iterations):
     print(f"--- GENERATION LOOP {loop_index+1} ---")
