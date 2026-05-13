@@ -338,7 +338,8 @@ If YES, output ONLY the word: DONE
 If there are any exercises, questions, or sections of the exam remaining unanswered, output a command directed to the AI telling it what to do next. For example: "Tu t'es arrêté avant la fin. Il faut maintenant corriger l'Exercice 2 et la fin du document."
 """
     try:
-        if MODEL_PROVIDER == "groq":
+        if MODEL_PROVIDER == "groq" or not claude_client:
+            # Mode Groq pur : superviseur = Llama-70B
             sup_resp = groq_client.chat.completions.create(
                 messages=[{"role": "user", "content": supervisor_prompt}],
                 model="llama-3.3-70b-versatile",
@@ -347,15 +348,26 @@ If there are any exercises, questions, or sections of the exam remaining unanswe
             )
             sup_decision = sup_resp.choices[0].message.content.strip()
         else:
-            import anthropic
-            sup_resp = claude_client.messages.create(
-                model=CLAUDE_MODEL,
-                max_tokens=200,
-                messages=[{"role": "user", "content": supervisor_prompt}],
-            )
-            sup_decision = sup_resp.content[0].text.strip()
+            # Mode Claude : on essaie Claude, fallback Groq si échec
+            try:
+                import anthropic
+                sup_resp = claude_client.messages.create(
+                    model=CLAUDE_MODEL,
+                    max_tokens=200,
+                    messages=[{"role": "user", "content": supervisor_prompt}],
+                )
+                sup_decision = sup_resp.content[0].text.strip()
+            except Exception as e_claude:
+                print(f"⚠️ Superviseur Claude échoué ({e_claude}). Basculement sur Groq Llama-70B...")
+                sup_resp = groq_client.chat.completions.create(
+                    messages=[{"role": "user", "content": supervisor_prompt}],
+                    model="llama-3.3-70b-versatile",
+                    temperature=0.1,
+                    max_tokens=200,
+                )
+                sup_decision = sup_resp.choices[0].message.content.strip()
     except Exception as e:
-        print(f"Superviseur en échec : {e}. On suppose terminé.")
+        print(f"Superviseur en échec total : {e}. On suppose terminé.")
         break
 
     if any(kw in sup_decision.upper() for kw in ("DONE", "YES", "TERMINÉ", "COMPLETE")):
