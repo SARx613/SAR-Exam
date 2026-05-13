@@ -139,11 +139,17 @@ print(f"Successfully extracted text. Sending to {MODEL_PROVIDER.upper()}...")
 # ─── Initialize AI clients ───────────────────────────────────────────────────
 groq_client = None
 claude_client = None
+CLAUDE_MODEL = None
 
-if MODEL_PROVIDER == "groq":
+# Toujours initialiser Groq si la clé est dispo (sert de fallback crédit épuisé)
+if GROQ_API_KEY:
     groq_client = Groq(api_key=GROQ_API_KEY)
-    print("Client Groq initialisé.")
-else:
+    if MODEL_PROVIDER == "groq":
+        print("Client Groq initialisé (provider principal).")
+    else:
+        print("Client Groq initialisé (fallback crédit épuisé disponible).")
+
+if MODEL_PROVIDER != "groq":
     try:
         import anthropic
         claude_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -154,41 +160,54 @@ else:
         sys.exit(1)
 
 # ─── Helper : call the configured AI model ───────────────────────────────────
+def _call_groq_fallback(system_msg, user_msg, max_tokens):
+    """Fallback Groq : GPT-OSS-120B → Llama-70B."""
+    if not groq_client:
+        raise Exception("Groq fallback demandé mais GROQ_API_KEY absent — impossible.")
+    print("🔀 Basculement sur Groq (GPT-OSS-120B)...")
+    try:
+        resp = groq_client.chat.completions.create(
+            messages=[{"role": "system", "content": system_msg},
+                      {"role": "user",   "content": user_msg}],
+            model="openai/gpt-oss-120b",
+            temperature=0.1,
+            max_tokens=min(max_tokens, 8000),
+        )
+        text = resp.choices[0].message.content or ""
+        if not text.strip():
+            raise Exception("GPT-120B vide.")
+        return text, False
+    except Exception as e:
+        print(f"GPT-120B error: {e} → fallback Llama-70B")
+        resp = groq_client.chat.completions.create(
+            messages=[{"role": "system", "content": system_msg},
+                      {"role": "user",   "content": user_msg}],
+            model="llama-3.3-70b-versatile",
+            temperature=0.1,
+            max_tokens=min(max_tokens, 8000),
+        )
+        text = resp.choices[0].message.content or ""
+        if not text.strip():
+            raise Exception("Llama-70B AUSSI vide.")
+        return text, False
+
 def call_model(system_msg, user_msg, max_tokens):
     """Appelle le provider sélectionné et retourne (texte, hit_limit)."""
 
     if MODEL_PROVIDER == "groq":
-        # ── Groq : essai GPT-120B → fallback Llama-70B ──────────────────────
-        try:
-            resp = groq_client.chat.completions.create(
-                messages=[{"role": "system", "content": system_msg},
-                          {"role": "user",   "content": user_msg}],
-                model="openai/gpt-oss-120b",
-                temperature=0.1,
-                max_tokens=max_tokens,
-            )
-            text = resp.choices[0].message.content or ""
-            if not text.strip():
-                raise Exception("GPT-120B retourné vide.")
-            return text, False
-        except Exception as e:
-            print(f"GPT-120B error: {e} → fallback Llama-70B")
-            resp = groq_client.chat.completions.create(
-                messages=[{"role": "system", "content": system_msg},
-                          {"role": "user",   "content": user_msg}],
-                model="llama-3.3-70b-versatile",
-                temperature=0.1,
-                max_tokens=max_tokens,
-            )
-            text = resp.choices[0].message.content or ""
-            if not text.strip():
-                raise Exception("Llama-70B fallback AUSSI vide.")
-            return text, False
+        return _call_groq_fallback(system_msg, user_msg, max_tokens)
 
     else:
         # ── Anthropic Claude (haiku / sonnet / opus) ──────────────────────────
-        # Gestion automatique des rate limits avec backoff exponentiel
         import anthropic
+
+        def _is_billing_error(e):
+            """Détecte les erreurs de crédit/facturation Anthropic."""
+            if isinstance(e, anthropic.APIStatusError) and e.status_code == 402:
+                return True
+            msg = str(e).lower()
+            return any(kw in msg for kw in ("credit", "billing", "balance", "quota", "payment", "insufficient"))
+
         for attempt in range(6):
             try:
                 resp = claude_client.messages.create(
@@ -200,15 +219,22 @@ def call_model(system_msg, user_msg, max_tokens):
                 text = resp.content[0].text if resp.content else ""
                 hit_limit = (resp.stop_reason == "max_tokens")
                 return text, hit_limit
+
             except anthropic.RateLimitError:
                 wait = 60 * (attempt + 1)
-                print(f"⏳ Rate limit Anthropic atteint. Attente {wait}s (tentative {attempt+1}/6)...")
+                print(f"⏳ Rate limit Anthropic. Attente {wait}s (tentative {attempt+1}/6)...")
                 time.sleep(wait)
-            except anthropic.APIStatusError as e:
+
+            except Exception as e:
+                if _is_billing_error(e):
+                    print(f"💳 Crédit Anthropic épuisé ({e}). Basculement automatique sur Groq...")
+                    return _call_groq_fallback(system_msg, user_msg, max_tokens)
                 print(f"Anthropic API error: {e}")
                 raise
-        raise Exception("Toutes les tentatives Anthropic ont échoué (rate limit persistant).")
 
+        # Rate limit persistant après 6 tentatives → essai Groq
+        print("⚠️ Rate limit Anthropic persistant après 6 tentatives. Basculement sur Groq...")
+        return _call_groq_fallback(system_msg, user_msg, max_tokens)
 # Generate an effective prompt requesting L3 Math level assistance
 prompt = f"""
 Tu es un brillant professeur de mathématiques à l'université, et tu dois produire la CORRECTION OFFICIELLE PARFAITE (visant la note de 20/20) d'un examen de 3ème année de Licence (L3) d'Algèbre.
