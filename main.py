@@ -11,17 +11,49 @@ from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 
+# ─────────────────────────────────────────────
 # 1. Configuration & Secrets
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+# ─────────────────────────────────────────────
+#
+# MODEL_PROVIDER controls which AI backend to use:
+#   "groq"          → Groq API (GPT-120B + Llama-70B fallback) — GRATUIT
+#   "claude_haiku"  → Claude Haiku 4.5  ($1/$5 par MTok)   ← le plus économique
+#   "claude_sonnet" → Claude Sonnet 4.6 ($3/$15 par MTok)  ← bon équilibre
+#   "claude_opus"   → Claude Opus 4.7  ($5/$25 par MTok)   ← le plus puissant
+#
+# Pour utiliser Claude, définis aussi ANTHROPIC_API_KEY dans tes secrets.
+# ─────────────────────────────────────────────
+
+MODEL_PROVIDER = os.environ.get("MODEL_PROVIDER", "groq").lower()
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 GOOGLE_CREDENTIALS_JSON = os.environ.get("GOOGLE_CREDENTIALS")
 
-if not GROQ_API_KEY:
-    print("Error: Missing GROQ_API_KEY.")
+# Map provider names to Anthropic model identifiers
+CLAUDE_MODEL_MAP = {
+    "claude_haiku":  "claude-haiku-4-5",
+    "claude_sonnet": "claude-sonnet-4-6",
+    "claude_opus":   "claude-opus-4-7",
+}
+
+# Validate required secrets depending on chosen provider
+if MODEL_PROVIDER == "groq":
+    if not GROQ_API_KEY:
+        print("Error: MODEL_PROVIDER=groq mais GROQ_API_KEY est absent.")
+        sys.exit(1)
+elif MODEL_PROVIDER in CLAUDE_MODEL_MAP:
+    if not ANTHROPIC_API_KEY:
+        print(f"Error: MODEL_PROVIDER={MODEL_PROVIDER} mais ANTHROPIC_API_KEY est absent.")
+        sys.exit(1)
+else:
+    print(f"Error: MODEL_PROVIDER='{MODEL_PROVIDER}' inconnu. Choix valides : groq, claude_haiku, claude_sonnet, claude_opus")
     sys.exit(1)
 
 if not GOOGLE_CREDENTIALS_JSON:
     print("Error: Missing GOOGLE_CREDENTIALS. You must set this environment variable with the Service Account JSON.")
     sys.exit(1)
+
+print(f"✅ Mode sélectionné : {MODEL_PROVIDER.upper()}")
 
 print("Connecting to Google Drive...")
 try:
@@ -102,10 +134,80 @@ except Exception as e:
 if not extracted_text.strip():
     print("Warning: The PDF text was completely empty. It might be composed only of scanned images. Groq text api will likely fail.")
 
-print("Successfully extracted text. Sending to Groq...")
+print(f"Successfully extracted text. Sending to {MODEL_PROVIDER.upper()}...")
 
-# Initialize Groq client
-client = Groq(api_key=GROQ_API_KEY)
+# ─── Initialize AI clients ───────────────────────────────────────────────────
+groq_client = None
+claude_client = None
+
+if MODEL_PROVIDER == "groq":
+    groq_client = Groq(api_key=GROQ_API_KEY)
+    print("Client Groq initialisé.")
+else:
+    try:
+        import anthropic
+        claude_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        CLAUDE_MODEL = CLAUDE_MODEL_MAP[MODEL_PROVIDER]
+        print(f"Client Anthropic initialisé — modèle : {CLAUDE_MODEL}")
+    except ImportError:
+        print("Error: Le package 'anthropic' n'est pas installé. Lance : pip install anthropic")
+        sys.exit(1)
+
+# ─── Helper : call the configured AI model ───────────────────────────────────
+def call_model(system_msg, user_msg, max_tokens):
+    """Appelle le provider sélectionné et retourne (texte, hit_limit)."""
+
+    if MODEL_PROVIDER == "groq":
+        # ── Groq : essai GPT-120B → fallback Llama-70B ──────────────────────
+        try:
+            resp = groq_client.chat.completions.create(
+                messages=[{"role": "system", "content": system_msg},
+                          {"role": "user",   "content": user_msg}],
+                model="openai/gpt-oss-120b",
+                temperature=0.1,
+                max_tokens=max_tokens,
+            )
+            text = resp.choices[0].message.content or ""
+            if not text.strip():
+                raise Exception("GPT-120B retourné vide.")
+            return text, False
+        except Exception as e:
+            print(f"GPT-120B error: {e} → fallback Llama-70B")
+            resp = groq_client.chat.completions.create(
+                messages=[{"role": "system", "content": system_msg},
+                          {"role": "user",   "content": user_msg}],
+                model="llama-3.3-70b-versatile",
+                temperature=0.1,
+                max_tokens=max_tokens,
+            )
+            text = resp.choices[0].message.content or ""
+            if not text.strip():
+                raise Exception("Llama-70B fallback AUSSI vide.")
+            return text, False
+
+    else:
+        # ── Anthropic Claude (haiku / sonnet / opus) ──────────────────────────
+        # Gestion automatique des rate limits avec backoff exponentiel
+        import anthropic
+        for attempt in range(6):
+            try:
+                resp = claude_client.messages.create(
+                    model=CLAUDE_MODEL,
+                    max_tokens=max_tokens,
+                    system=system_msg,
+                    messages=[{"role": "user", "content": user_msg}],
+                )
+                text = resp.content[0].text if resp.content else ""
+                hit_limit = (resp.stop_reason == "max_tokens")
+                return text, hit_limit
+            except anthropic.RateLimitError:
+                wait = 60 * (attempt + 1)
+                print(f"⏳ Rate limit Anthropic atteint. Attente {wait}s (tentative {attempt+1}/6)...")
+                time.sleep(wait)
+            except anthropic.APIStatusError as e:
+                print(f"Anthropic API error: {e}")
+                raise
+        raise Exception("Toutes les tentatives Anthropic ont échoué (rate limit persistant).")
 
 # Generate an effective prompt requesting L3 Math level assistance
 prompt = f"""
@@ -142,69 +244,64 @@ full_answer = ""
 current_instruction = "Résous l'intégralité de l'examen de la première à la dernière question."
 max_iterations = 8
 
+# Limite de tokens selon le provider
+MAX_OUTPUT_TOKENS = {
+    "groq":         8000,
+    "claude_haiku": 8096,
+    "claude_sonnet": 16000,
+    "claude_opus":  16000,
+}.get(MODEL_PROVIDER, 8000)
+
 for loop_index in range(max_iterations):
-    print(f"--- GENERATION LOOP {loop_index+1} ---")
-    
+    print(f"--- GENERATION LOOP {loop_index+1} ({MODEL_PROVIDER.upper()}) ---")
+
     current_prompt = prompt + "\n\n" + current_instruction
-    
+
     try:
         encoding = tiktoken.get_encoding("cl100k_base")
         input_token_count = len(encoding.encode(current_prompt + system_role))
     except Exception:
         input_token_count = 2000
-        
-    safety_buffer = 150
-    calc_max_tokens = 8000 - input_token_count - safety_buffer
-    if calc_max_tokens < 1000: calc_max_tokens = 4000
-    
-    print(f"Calling GPT-120B with limit of {calc_max_tokens} tokens...")
+
+    safety_buffer = 200
+    calc_max_tokens = MAX_OUTPUT_TOKENS - safety_buffer
+    if calc_max_tokens < 1000:
+        calc_max_tokens = 4000
+
+    print(f"Appel {MODEL_PROVIDER.upper()} — max_tokens de sortie : {calc_max_tokens}")
     try:
-        resp = client.chat.completions.create(
-            messages=[{"role": "system", "content": system_role}, {"role": "user", "content": current_prompt}],
-            model="openai/gpt-oss-120b",
-            temperature=0.1,
-            max_tokens=calc_max_tokens
-        )
-        new_text = resp.choices[0].message.content or ""
+        new_text, hit_limit = call_model(system_role, current_prompt, calc_max_tokens)
         if not new_text.strip():
-            raise Exception("GPT-120B silently returned an empty string.")
+            print("Le modèle a retourné une réponse vide. Arrêt de la boucle.")
+            break
     except Exception as e:
-        print(f"GPT error or empty response: {e}. Falling back to llama-70b.")
-        try:
-             resp = client.chat.completions.create(
-                messages=[{"role": "system", "content": system_role}, {"role": "user", "content": current_prompt}],
-                model="llama-3.3-70b-versatile",
-                temperature=0.1,
-                max_tokens=12000 - input_token_count - safety_buffer
-             )
-             new_text = resp.choices[0].message.content or ""
-             if not new_text.strip():
-                 print("Fallback Llama-70b ALSO returned empty string. Breaking.")
-                 break
-        except Exception as e2:
-             print(f"Fallback failed: {e2}")
-             break
-             
+        print(f"Erreur fatale lors de l'appel au modèle : {e}")
+        break
+
     full_answer += "\n" + new_text
-    
-    # Margin Token Check (did it hit the mathematical limit?)
+
+    # ── Détection coupure (limite de tokens atteinte) ─────────────────────────
     try:
         gen_tokens = len(encoding.encode(new_text))
-    except:
+    except Exception:
         gen_tokens = 0
-        
-    if gen_tokens > 0 and abs(calc_max_tokens - gen_tokens) < 50:
-        print(f"HARD LIMIT REACHED! ({gen_tokens} generated vs {calc_max_tokens} allowed). Forcing continuation loop.")
+
+    if hit_limit or (gen_tokens > 0 and abs(calc_max_tokens - gen_tokens) < 80):
+        print(f"HARD LIMIT REACHED! ({gen_tokens} générés vs {calc_max_tokens} max). Forçage de la continuation...")
         cutoff_tail = new_text[-400:]
-        current_instruction = f"IMPORTANT : Ta précédente réponse a été brutalement coupée par le système à cause de la limite de texte.\nVoici la toute fin de ton texte coupé :\n[...]\n{cutoff_tail}\n\nReprends la rédaction EXACTEMENT à la lettre près où tu as été coupé (sans AUCUNE phrase d'introduction) et continue la correction."
-        print("Sleeping 61 seconds to refresh Groq API Token Limit...")
-        time.sleep(61)
+        current_instruction = (
+            f"IMPORTANT : Ta précédente réponse a été brutalement coupée par le système à cause de la limite de texte.\n"
+            f"Voici la toute fin de ton texte coupé :\n[...]\n{cutoff_tail}\n\n"
+            f"Reprends la rédaction EXACTEMENT à la lettre près où tu as été coupé (sans AUCUNE phrase d'introduction) et continue la correction."
+        )
+        wait_time = 65 if MODEL_PROVIDER == "groq" else 5
+        print(f"Attente {wait_time}s avant continuation...")
+        time.sleep(wait_time)
         continue
-        
-    # Completeness Check using Supervisor Llama-3.3-70B
-    print("Generation complete under limit. Activating Supervisor Llama 3 70B...")
-    supervisor_prompt = f"""
-You are the Quality Assurance Supervisor. Read the original exam text:
+
+    # ── Vérification complétude via superviseur ───────────────────────────────
+    print("Génération sous la limite. Activation du Superviseur...")
+    supervisor_prompt = f"""You are the Quality Assurance Supervisor. Read the original exam text:
 {extracted_text}
 
 Read the mathematical correction generated by the AI so far:
@@ -212,28 +309,42 @@ Read the mathematical correction generated by the AI so far:
 
 Compare them. Is the correction 100% completed up to and including the FINAL exercise of the exam?
 If YES, output ONLY the word: DONE
-If there are any exercises, questions, or sections of the exam remaining unanswered, you must output a command directed to the AI telling it what to do next. For example: "Tu t'es arrêté avant la fin. Il faut maintenant corriger l'Exercice 2 et la fin du document."
+If there are any exercises, questions, or sections of the exam remaining unanswered, output a command directed to the AI telling it what to do next. For example: "Tu t'es arrêté avant la fin. Il faut maintenant corriger l'Exercice 2 et la fin du document."
 """
     try:
-        sup_resp = client.chat.completions.create(
-            messages=[{"role": "user", "content": supervisor_prompt}],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1,
-            max_tokens=200
-        )
-        sup_decision = sup_resp.choices[0].message.content.strip()
+        if MODEL_PROVIDER == "groq":
+            sup_resp = groq_client.chat.completions.create(
+                messages=[{"role": "user", "content": supervisor_prompt}],
+                model="llama-3.3-70b-versatile",
+                temperature=0.1,
+                max_tokens=200,
+            )
+            sup_decision = sup_resp.choices[0].message.content.strip()
+        else:
+            import anthropic
+            sup_resp = claude_client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=200,
+                messages=[{"role": "user", "content": supervisor_prompt}],
+            )
+            sup_decision = sup_resp.content[0].text.strip()
     except Exception as e:
-        print(f"Supervisor failed: {e}. Assuming done.")
+        print(f"Superviseur en échec : {e}. On suppose terminé.")
         break
-        
-    if "DONE" in sup_decision.upper() or "YES" in sup_decision.upper() or "TERMINÉ" in sup_decision.upper():
-        print("Supervisor validated FULL completion! Ending loop.")
+
+    if any(kw in sup_decision.upper() for kw in ("DONE", "YES", "TERMINÉ", "COMPLETE")):
+        print("✅ Superviseur : correction COMPLÈTE. Fin de boucle.")
         break
     else:
-        print(f"Supervisor directed continuation: {sup_decision}")
-        current_instruction = f"IMPORTANT : Tu as généré avec succès une partie du corrigé, mais le superviseur a noté que ce n'est pas terminé. Voici sa consigne exacte pour reprendre la correction :\n\"{sup_decision}\"\nN'écris aucune introduction, attaque directement la suite de la correction en LaTeX."
-        print("Sleeping 61 seconds for API quota refresh...")
-        time.sleep(61)
+        print(f"Superviseur → continuation : {sup_decision}")
+        current_instruction = (
+            f"IMPORTANT : Tu as généré avec succès une partie du corrigé, mais le superviseur a noté que ce n'est pas terminé. "
+            f"Voici sa consigne exacte pour reprendre la correction :\n\"{sup_decision}\"\n"
+            f"N'écris aucune introduction, attaque directement la suite de la correction en LaTeX."
+        )
+        wait_time = 65 if MODEL_PROVIDER == "groq" else 10
+        print(f"Attente {wait_time}s avant la prochaine itération...")
+        time.sleep(wait_time)
 
 answer_markdown = full_answer
 if not answer_markdown.strip():
@@ -287,20 +398,15 @@ html_page = f"""<!DOCTYPE html>
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
             font-size: 26px; /* VERY LARGE FONT AS REQUESTED */
             line-height: 1.6;
-            padding-bottom: 5rem;
         }}
         .container {{
-            max-width: 1000px;
-            width: 90%;
-            margin: 3rem 3rem;
+            width: 100%;
+            min-height: 100vh;
+            box-sizing: border-box;
             background: var(--surface-color);
-            padding: 3rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            padding: 3rem 4rem 5rem;
         }}
         h1, h2, h3 {{
             font-family: 'Outfit', sans-serif;

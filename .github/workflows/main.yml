@@ -33,10 +33,14 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run Script to Query Google Drive and Groq
+      - name: Run Script (Google Drive → AI Model → GitHub Pages)
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          # Choix du provider : groq | claude_haiku | claude_sonnet | claude_opus
+          MODEL_PROVIDER: ${{ secrets.MODEL_PROVIDER }}
+          # Clés API — seule la clé du provider choisi est nécessaire
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           python main.py
 
