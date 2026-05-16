@@ -1,40 +1,117 @@
-# Maths Exam Correction via Groq and Google Drive
+# 🎓 Correcteur Automatique d'Examen Universitaire (IA + Google Drive + GitHub Pages)
 
-Ce projet est un script automatisé pour télécharger `"Algebre Exam 2026.pdf"` depuis votre **Google Drive**, utiliser l'intelligence artificielle Groq (Llama 3 70B) pour répondre à toutes les questions de niveau Universitaire (L3 Maths), et publier le résultat sur une jolie page web via **GitHub Pages**.
+Ce projet est un pipeline entièrement automatisé qui :
 
-## 🚀 Étape 1 : Créer votre Google Service Account (Sans blocage 2FA !)
+1. **Télécharge un PDF d'examen** depuis votre Google Drive.
+2. **Extrait le texte** du PDF avec PyMuPDF.
+3. **Génère une correction complète et rigoureuse** de niveau universitaire (L3) à l'aide d'un modèle d'IA (Groq ou Claude d'Anthropic).
+4. **Valide la complétude** de la correction grâce à un superviseur IA dédié, et force des itérations si la réponse est incomplète.
+5. **Publie le résultat** sous forme de page HTML avec rendu LaTeX/MathJax sur **GitHub Pages**.
 
-Puisque Google permet de créer des comptes "Robots" sans authentification bloquante, la connexion est extrêmement simple et fiable :
+L'action GitHub se déclenche automatiquement **tous les jours à 8h du matin (heure Argentine)**, ou manuellement depuis l'onglet `Actions` de GitHub.
 
-1. Allez sur la [Console Google Cloud](https://console.cloud.google.com/).
-2. Créez un nouveau projet (ou sélectionnez-en un existant).
-3. Cliquez sur **Menu (hamburger)** > **APIs & Services** > **Library**, cherchez **Google Drive API** et cliquez sur "Enable" (Activer).
-4. Cliquez sur **Menu** > **IAM & Admin** > **Service Accounts**.
-5. Cliquez sur "CREATE SERVICE ACCOUNT". Donnez-lui un nom (ex: `github-actions-bot`) et terminez la création.
-6. **Le plus important :** Sur la page du Service Account que vous venez de créer, cliquez sur l'onglet **KEYS**, puis "ADD KEY" > "Create new key" au format **JSON**. 
-   *Un fichier contenant plein de code sera téléchargé sur votre ordinateur.*
+---
 
-## ⚙️ Étape 2 : Configurer Google Drive et GitHub Secrets
+## 🤖 Modèles d'IA disponibles
 
-### A. Dans Google Drive :
-1. Copiez l'adresse email de votre "Service Account" (elle ressemble à `votre-nom@projetxyz.iam.gserviceaccount.com`).
-2. Ouvrez votre dossier Google Drive où se trouve le fichier `Algebre Exam 2026.pdf`.
-3. Cliquez-droit sur le fichier (ou le dossier) > **Partager**, et invitez l'adresse email de votre Service Account avec la permission **Lecteur** (Viewer). *(De cette façon, l'intelligence artificielle y a accès)*.
+Le provider est configurable via la variable d'environnement `MODEL_PROVIDER` :
 
-### B. Dans GitHub :
-Sur la page de votre projet (GitHub.com) :
-1. Allez dans **Settings** > **Secrets and variables** > **Actions**
-2. Créez "New repository secret" pour chacune des valeurs suivantes :
+| Valeur              | Modèle utilisé              | Coût approximatif       |
+|---------------------|-----------------------------|-------------------------|
+| `groq` (défaut)     | GPT-OSS-120B → Llama-70B    | Gratuit                 |
+| `claude_haiku`      | Claude Haiku 4.5            | $1 / $5 par MTok        |
+| `claude_sonnet`     | Claude Sonnet 4.6           | $3 / $15 par MTok       |
+| `claude_opus`       | Claude Opus 4.7             | $5 / $25 par MTok       |
 
-- `GOOGLE_CREDENTIALS` : Ouvrez le fichier JSON que Google vous a donné à l'étape 1 avec n'importe quel éditeur de texte, et **collez TOUT son contenu ici**.
-- `GROQ_API_KEY` : Votre clé secrète Groq.
+> **Fallback automatique :** Si Claude manque de crédits ou atteint une limite de taux, le script bascule automatiquement sur Groq.
 
-## 🌐 Étape 3 : Activer GitHub Pages et Pousser le Code
+---
 
-1. Poussez ce dossier sur votre projet GitHub (`git init`, `git add .`, ...).
-2. Sur la page du Repo GitHub, allez dans **Settings** > **Pages**.
-3. Dans **Build and deployment**, sous "Source", selectionnez `Deploy from a branch`. 
-4. Sous "Branch", selectionnez `main`, et pour le dossier, selectionnez `/docs`. Appuyez sur "Save".
-5. Déclenchez l'action manuellement depuis l'onglet `Actions` (workflow dispatch), ou attendez qu'elle s'exécute d'elle-même (tous les jours à 8h du matin).
+## 🗂️ Choisir le fichier d'examen à corriger
 
-La page web sera alors disponible au lien standard fourni par GitHub Pages. L'output sera écrit en très gros (22px) pour bien le voir !
+Modifiez simplement le contenu du fichier **`exam_filename.txt`** à la racine du projet :
+
+```
+Algebre Exam 2026.pdf
+```
+
+Le script cherchera ce fichier par nom exact dans votre Google Drive.
+
+---
+
+## 🚀 Installation et Configuration
+
+### Étape 1 : Créer un compte de service Google (Service Account)
+
+1. Rendez-vous sur la [Console Google Cloud](https://console.cloud.google.com/).
+2. Créez un nouveau projet ou sélectionnez un projet existant.
+3. Dans le menu, allez dans **APIs & Services** > **Library**, cherchez **Google Drive API** et cliquez sur **Enable**.
+4. Allez dans **IAM & Admin** > **Service Accounts**, puis cliquez sur **CREATE SERVICE ACCOUNT**.
+5. Donnez-lui un nom (ex : `github-actions-bot`) et terminez la création.
+6. Sur la page du Service Account créé, allez dans l'onglet **KEYS** > **ADD KEY** > **Create new key** (format **JSON**).
+   *Un fichier JSON sera téléchargé sur votre ordinateur — ne le perdez pas.*
+
+### Étape 2 : Partager le fichier PDF avec le Service Account
+
+1. Copiez l'adresse email de votre Service Account (ex : `mon-bot@mon-projet.iam.gserviceaccount.com`).
+2. Dans Google Drive, faites un clic droit sur votre fichier PDF d'examen > **Partager**.
+3. Invitez l'adresse email du Service Account avec le rôle **Lecteur (Viewer)**.
+
+### Étape 3 : Configurer les secrets GitHub
+
+Sur la page de votre dépôt GitHub, allez dans **Settings** > **Secrets and variables** > **Actions**, puis créez les secrets suivants :
+
+| Nom du secret        | Valeur                                                                 |
+|----------------------|------------------------------------------------------------------------|
+| `GOOGLE_CREDENTIALS` | Le contenu **entier** du fichier JSON téléchargé à l'étape 1.         |
+| `GROQ_API_KEY`       | Votre clé API Groq (obtenue sur [console.groq.com](https://console.groq.com)). |
+| `ANTHROPIC_API_KEY`  | *(Optionnel)* Votre clé API Anthropic si vous utilisez Claude.        |
+| `MODEL_PROVIDER`     | *(Optionnel)* `groq`, `claude_haiku`, `claude_sonnet`, ou `claude_opus`. Par défaut : `groq`. |
+
+### Étape 4 : Activer GitHub Pages
+
+1. Dans les paramètres de votre dépôt GitHub (**Settings** > **Pages**).
+2. Sous **Build and deployment**, sélectionnez **Deploy from a branch**.
+3. Choisissez la branche `main` et le dossier `/docs`. Cliquez sur **Save**.
+
+---
+
+## ▶️ Utilisation
+
+### Déclenchement automatique
+L'action s'exécute automatiquement **tous les jours à 8h00 (heure Argentine, UTC-3)**.
+
+### Déclenchement manuel
+1. Allez dans l'onglet **Actions** de votre dépôt GitHub.
+2. Sélectionnez le workflow dans la liste.
+3. Cliquez sur **Run workflow**.
+
+### Résultat
+Une fois l'action terminée, la page HTML de correction est disponible à l'URL GitHub Pages de votre dépôt (ex : `https://votre-nom.github.io/votre-repo/`).
+
+La page affiche la correction complète avec :
+- Un rendu **MathJax** pour toutes les formules mathématiques LaTeX.
+- Un style **dark mode** avec une police large (26px) pour une lecture confortable.
+
+---
+
+## 📁 Structure du projet
+
+```
+.
+├── main.py               # Script principal du pipeline IA
+├── exam_filename.txt     # Nom du fichier PDF à corriger dans Google Drive
+├── requirements.txt      # Dépendances Python
+├── docs/
+│   └── index.html        # Page HTML générée (publiée sur GitHub Pages)
+└── .github/
+    └── workflows/        # Définition de l'action GitHub (CI/CD)
+```
+
+---
+
+## 🔒 Sécurité
+
+- Ne committez **jamais** le fichier JSON de votre Service Account dans le dépôt.
+- Toutes les clés API doivent être stockées exclusivement dans les **GitHub Secrets**, pas dans le code.
+- Le fichier `.gitignore` est configuré pour exclure les fichiers sensibles.
