@@ -436,7 +436,7 @@ html_page = f"""<!DOCTYPE html>
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Inter', sans-serif;
-            font-size: 26px; /* VERY LARGE FONT AS REQUESTED */
+            font-size: 32px; /* VERY LARGE FONT AS REQUESTED */
             line-height: 1.6;
         }}
         .container {{
