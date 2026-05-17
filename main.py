@@ -425,10 +425,10 @@ html_page = f"""<!DOCTYPE html>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
-            --accent-color: #3b82f6;
-            --surface-color: #1e293b;
+            --bg-color: #FFE600;
+            --text-color: #000000;
+            --accent-color: #000000;
+            --surface-color: #FFE600;
         }}
         body {{
             margin: 0;
@@ -451,14 +451,16 @@ html_page = f"""<!DOCTYPE html>
             color: var(--accent-color);
         }}
         pre {{
-            background: #000;
+            background: #ffe066;
+            border: 2px solid #000;
             padding: 1rem;
             border-radius: 8px;
             overflow-x: auto;
         }}
         code {{
             font-family: monospace;
-            background: #000;
+            background: #ffe066;
+            border: 1px solid #000;
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
         }}
@@ -467,7 +469,7 @@ html_page = f"""<!DOCTYPE html>
 <body>
     <div class="container">
         <h1>Correction de l'examen {display_title}</h1>
-        <hr style="border: 0; border-top: 1px solid #334155; margin-bottom: 2rem;">
+        <hr style="border: 0; border-top: 2px solid #000; margin-bottom: 2rem;">
         <div class="content">
             {html_content}
         </div>
