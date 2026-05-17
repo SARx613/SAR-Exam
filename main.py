@@ -425,10 +425,10 @@ html_page = f"""<!DOCTYPE html>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --bg-color: #FFE600;
+            --bg-color: #ffffff;
             --text-color: #000000;
             --accent-color: #000000;
-            --surface-color: #FFE600;
+            --surface-color: #ffffff;
         }}
         body {{
             margin: 0;
@@ -451,16 +451,16 @@ html_page = f"""<!DOCTYPE html>
             color: var(--accent-color);
         }}
         pre {{
-            background: #ffe066;
-            border: 2px solid #000;
+            background: #f5f5f5;
+            border: 2px solid #cccccc;
             padding: 1rem;
             border-radius: 8px;
             overflow-x: auto;
         }}
         code {{
             font-family: monospace;
-            background: #ffe066;
-            border: 1px solid #000;
+            background: #f5f5f5;
+            border: 1px solid #cccccc;
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
         }}
