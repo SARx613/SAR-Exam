@@ -38,13 +38,11 @@ function autoScrollLoop() {
         currentPos += (direction === 1) ? 0.15 : -20;
         window.scrollTo(0, currentPos);
 
+        // Arrivé en bas → attend 7s puis recharge directement
         if (currentPos >= limit && direction === 1) {
             pausing = true;
-            setTimeout(() => { direction = -1; pausing = false; }, 6000);
-        }
-        if (currentPos <= 0 && direction === -1) {
             clearInterval(timer);
-            location.reload();
+            setTimeout(() => location.reload(), 7000);
         }
     }, 10);
 }
