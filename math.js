@@ -3,13 +3,13 @@
 // @match       https://sarx613.github.io/SAR-Exam/*
 // ==/UserScript==
 
-// Variables globales
+// Variables globales accessibles par tout le script
 let currentPos = 0;
 let direction = 1;
 let pausing = false;
 let timer = null;
 
-// ─── Détection des exercices sur la page ────────────────────────────────────
+// ─── Recherche de la position d'un exercice dans la page ────────────────────
 function findExercicePosition(num) {
     const patterns = [
         `exercice ${num}`,
@@ -22,48 +22,41 @@ function findExercicePosition(num) {
         `partie ${num}`,
     ];
 
-    const selectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'b', 'strong', 'p', 'div'];
+    // Cherche d'abord dans les titres (priorité) puis dans le reste
+    const selectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'b', 'strong', 'p'];
 
     for (const selector of selectors) {
-        const elements = document.querySelectorAll(selector);
-        for (const el of elements) {
+        for (const el of document.querySelectorAll(selector)) {
             const text = el.textContent.trim().toLowerCase();
             for (const pattern of patterns) {
                 if (text.startsWith(pattern) || text.includes(pattern)) {
                     const rect = el.getBoundingClientRect();
-                    return rect.top + window.scrollY - 20; // 20px de marge au-dessus
+                    return Math.max(0, rect.top + window.scrollY - 30); // 30px de marge
                 }
             }
         }
     }
-    return null;
+    return null; // Non trouvé
 }
 
 // ─── Saut vers un exercice ───────────────────────────────────────────────────
 function jumpToExercice(num) {
     const pos = findExercicePosition(num);
     if (pos !== null) {
-        currentPos = Math.max(0, pos);
+        currentPos = pos;
         direction = 1;
         pausing = false;
         window.scrollTo(0, currentPos);
-        console.log(`[AutoScroll] ✅ Saut vers Exercice ${num} — position ${Math.round(currentPos)}px`);
+        console.log(`[AutoScroll] ✅ Exercice ${num} trouvé → position ${Math.round(currentPos)}px`);
     } else {
-        console.warn(`[AutoScroll] ⚠️ Exercice ${num} introuvable sur la page`);
+        console.warn(`[AutoScroll] ⚠️ Exercice ${num} introuvable sur la page — départ depuis le début`);
+        currentPos = 0;
     }
 }
 
-// ─── Détection du paramètre ?exo=N dans l'URL ───────────────────────────────
-// Utilisé quand on arrive depuis les pages /1, /2, ..., /6
-function getExoFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    const exo = parseInt(params.get('exo'));
-    return (!isNaN(exo) && exo >= 1 && exo <= 9) ? exo : null;
-}
-
-// ─── Boucle de défilement ───────────────────────────────────────────────────
+// ─── Boucle principale de défilement ────────────────────────────────────────
 function autoScrollLoop() {
-    const speedDown = 0.15;  // descente lente
+    const speedDown = 0.15;  // descente lente (px par tick de 10ms = 15px/s)
     const speedUp   = 20;    // remontée rapide
 
     if (timer) clearInterval(timer);
@@ -90,7 +83,7 @@ function autoScrollLoop() {
             }, 6000);
         }
 
-        // Arrivé en haut → reload + restart (repart depuis 0 ou depuis l'exo de départ)
+        // Arrivé en haut → reload + restart
         if (currentPos <= 0 && direction === -1) {
             clearInterval(timer);
             location.reload();
@@ -99,13 +92,32 @@ function autoScrollLoop() {
     }, 10);
 }
 
-// ─── Démarrage ───────────────────────────────────────────────────────────────
-setTimeout(() => {
-    const exoNum = getExoFromURL();
-    if (exoNum !== null) {
-        // Page /1 à /6 : on saute d'abord à l'exercice, puis on lance le scroll
-        jumpToExercice(exoNum);
+// ─── Point d'entrée ──────────────────────────────────────────────────────────
+// Vérifie si on arrive depuis une sous-page /1 à /6
+const startExo = sessionStorage.getItem('startExercice');
+
+if (startExo) {
+    // Nettoie le flag immédiatement
+    sessionStorage.removeItem('startExercice');
+    const num = parseInt(startExo);
+    console.log(`[AutoScroll] 🎯 Mode exercice ${num} détecté`);
+
+    // Attend que la page et MathJax soient rendus avant de sauter
+    function startFromExercice() {
+        setTimeout(() => {
+            jumpToExercice(num);
+            // Lance le scroll 1s après le saut (laisse MathJax finir)
+            setTimeout(autoScrollLoop, 1000);
+        }, 800);
     }
-    // Dans tous les cas, on démarre la boucle de scroll depuis currentPos
-    autoScrollLoop();
-}, 3000);
+
+    if (document.readyState === 'complete') {
+        startFromExercice();
+    } else {
+        window.addEventListener('load', startFromExercice);
+    }
+
+} else {
+    // Démarrage normal depuis le haut après 3 secondes
+    setTimeout(autoScrollLoop, 3000);
+}
