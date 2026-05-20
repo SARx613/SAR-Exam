@@ -18,10 +18,13 @@ function findExercicePosition(num) {
         for (const el of document.querySelectorAll(selector)) {
             const text = el.textContent.trim().toLowerCase();
             if (patterns.some(p => text.startsWith(p) || text.includes(p))) {
-                return Math.max(0, el.getBoundingClientRect().top + window.scrollY - 30);
+                const pos = Math.max(0, el.getBoundingClientRect().top + window.scrollY - 30);
+                console.log(`[AutoScroll] Exercice ${num} trouvé dans <${selector}> : "${el.textContent.trim()}" → ${Math.round(pos)}px`);
+                return pos;
             }
         }
     }
+    console.warn(`[AutoScroll] Exercice ${num} INTROUVABLE dans la page`);
     return null;
 }
 
@@ -48,15 +51,19 @@ function autoScrollLoop() {
 
 // ─── Démarrage ───────────────────────────────────────────────────────────────
 if (exoParam) {
-    // Vient d'une sous-page /N → sauter à l'exercice puis scroller
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            const pos = findExercicePosition(parseInt(exoParam));
-            if (pos !== null) { currentPos = pos; window.scrollTo(0, currentPos); }
-            setTimeout(autoScrollLoop, 800);
-        }, 600);
-    });
+    // Le UserScript s'exécute après le chargement → on n'attend plus l'événement 'load'
+    // On attend juste que MathJax ait fini de rendre les formules (~2s)
+    console.log(`[AutoScroll] Paramètre exo=${exoParam} détecté, saut dans 2s…`);
+    setTimeout(() => {
+        const pos = findExercicePosition(parseInt(exoParam));
+        if (pos !== null) {
+            currentPos = pos;
+            window.scrollTo(0, currentPos);
+        }
+        setTimeout(autoScrollLoop, 800);
+    }, 2000);
 } else {
     // Page normale → départ depuis le haut après 3s
+    console.log('[AutoScroll] Démarrage normal depuis le haut');
     setTimeout(autoScrollLoop, 3000);
 }
