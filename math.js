@@ -1,6 +1,10 @@
 // ==UserScript==
-// @name        AutoScroll Va-et-Vient + Reload
-// @match       https://sarx613.github.io/SAR-Exam/*
+// @name         AutoScroll Va-et-Vient + Reload
+// @match        https://sarx613.github.io/SAR-Exam/
+// @match        https://sarx613.github.io/SAR-Exam/*
+// @updateURL    https://raw.githubusercontent.com/SARx613/SAR-Exam/main/math.js
+// @downloadURL  https://raw.githubusercontent.com/SARx613/SAR-Exam/main/math.js
+// @grant        none
 // ==/UserScript==
 
 let currentPos = 0;
