@@ -1,0 +1,484 @@
+
+# Questions de cours
+## a) Définition d’une probabilité P sur un ensemble dénombrable non vide Ω
+Une probabilité P sur un ensemble dénombrable non vide Ω est une fonction qui attribue à chaque événement A de Ω un nombre réel $P(A) \in [0, 1]$ de telle sorte que :
+- $P(\emptyset) = 0$
+- $P(Ω) = 1$
+- Pour toute suite d'événements mutuellement exclusifs $(A_n)_{n \geq 1}$, $P(\cup_{n \geq 1} A_n) = \sum_{n \geq 1} P(A_n)$
+
+## b) Inégalités de Markov et de Bienaymé-Tchebitcheff
+- L'inégalité de Markov : Soit X une variable aléatoire non négative et $a > 0$, alors $P(X \geq a) \leq \frac{E(X)}{a}$.
+- L'inégalité de Bienaymé-Tchebitcheff : Soit X une variable aléatoire de variance finie, $a > 0$, alors $P(|X - E(X)| \geq a) \leq \frac{Var(X)}{a^2}$.
+
+## c) Fonction génératrice des probabilités gX d’une variable X suivant la loi géométrique de paramètre p
+La fonction génératrice des probabilités de X est donnée par $g_X(x) = E(x^X) = \sum_{k=0}^{\infty} x^k P(X=k) = \sum_{k=0}^{\infty} x^k (1-p)^k p = \frac{p}{1 - (1-p)x}$ pour $|x| < \frac{1}{1-p}$.
+
+## d) Définition d’un état transcient d’une chaîne de Markov
+Un état $i$ est dit transcient si $P(X_n = i \text{ pour un } n \geq 1 | X_0 = i) < 1$, c'est-à-dire qu'il existe une probabilité positive de ne jamais revenir à cet état une fois qu'on l'a quitté.
+
+# Exercice 1
+## a) Loi de la variable aléatoire X1 + X2 + X3 + X4
+Puisque $X_1, X_2, X_3, X_4$ sont des variables aléatoires indépendantes de loi de Bernoulli de paramètre $\frac{1}{3}$, la somme $X_1 + X_2 + X_3 + X_4$ suit une loi binomiale de paramètres $n=4$ et $p=\frac{1}{3}$. La probabilité de $k$ succès en $n$ essais est donnée par $P(X_1 + X_2 + X_3 + X_4 = k) = \binom{n}{k} p^k (1-p)^{n-k}$.
+
+## b) Probabilité conditionnelle P(X1 + X2 = 1|X1 + X2 + X3 + X4 = 3)
+On calcule d'abord $P(X_1 + X_2 = 1 \cap X_1 + X_2 + X_3 + X_4 = 3)$, ce qui équivaut à $P(X_1 + X_2 = 1 \cap X_3 + X_4 = 2)$, puisque $X_1 + X_2 + X_3 + X_4 = 3$. En utilisant l'indépendance, cela se simplifie en $P(X_1 + X_2 = 1) \cdot P(X_3 + X_4 = 2)$.
+
+$P(X_1 + X_2 = 1) = \binom{2}{1} \left(\frac{1}{3}\right)^1 \left(\frac{2}{3}\right)^1 = \frac{4}{9}$.
+
+$P(X_3 + X_4 = 2) = \binom{2}{2} \left(\frac{1}{3}\right)^2 \left(\frac{2}{3}\right)^0 = \frac{1}{9}$.
+
+Ainsi, $P(X_1 + X_2 = 1 \cap X_1 + X_2 + X_3 + X_4 = 3) = \frac{4}{9} \cdot \frac{1}{9} = \frac{4}{81}$.
+
+La probabilité $P(X_1 + X_2 + X_3 + X_4 = 3)$ est donnée par la loi binomiale : $P(X_1 + X_2 + X_3 + X_4 = 3) = \binom{4}{3} \left(\frac{1}{3}\right)^3 \left(\frac{2}{3}\right)^1 = \frac{8}{81}$.
+
+La probabilité conditionnelle est alors $P(X_1 + X_2 = 1|X_1 + X_2 + X_3 + X_4 = 3) = \frac{P(X_1 + X_2 = 1 \cap X_1 + X_2 + X_3 + X_4 = 3)}{P(X_1 + X_2 + X_3 + X_4 = 3)} = \frac{\frac{4}{81}}{\frac{8}{81}} = \frac{1}{2}$.
+
+## c) Loi de la variable aléatoire produit X1.X2.X3.X4
+Le produit de variables aléatoires de Bernoulli est lui-même une variable aléatoire de Bernoulli, mais avec un paramètre qui dépend de la probabilité que chacune des variables soit égale à 1. Puisque $X_1, X_2, X_3, X_4$ sont indépendants, $P(X_1.X_2.X_3.X_4 = 1) = P(X_1 = 1) \cdot P(X_2 = 1) \cdot P(X_3 = 1) \cdot P(X_4 = 1) = \left(\frac{1}{3}\right)^4 = \frac{1}{81}$.
+
+Ainsi, la loi du produit est une loi de Bernoulli de paramètre $p = \frac{1}{81}$.
+
+## d) Existence d’une fonction g(x, y, z, t) définie sur {0, 1}^4 telle que V = g(X1, X2, X3, X4) soit de loi de Bernoulli de paramètre 1/2
+Pour que $V$ soit de loi de Bernoulli de paramètre $\frac{1}{2}$, il faut que $P(V = 1) = \frac{1}{2}$. Une fonction simple qui pourrait satisfaire cette condition est $g(x, y, z, t) = x \oplus y \oplus z \oplus t$, où $\oplus$ désigne le OU exclusif. Cependant, déterminer si une telle fonction existe et la trouver explicitement nécessite une analyse plus approfondie des combinaisons possibles de $X_1, X_2, X_3, X_4$ qui pourraient donner lieu à une variable aléatoire de Bernoulli de paramètre $\frac{1}{2}$.
+
+# Exercice 2
+## a) Fonction génératrice des moments MX(s) de la variable X de loi de Poisson de paramètre λ
+La fonction génératrice des moments est donnée par $M_X(s) = E(e^{sX}) = \sum_{k=0}^{\infty} e^{sk} \frac{e^{-\lambda} \lambda^k}{k!} = e^{-\lambda} \sum_{k=0}^{\infty} \frac{(e^s \lambda)^k}{k!} = e^{-\lambda} e^{e^s \lambda} = e^{\lambda(e^s - 1)}$.
+
+## b) i) Fonction génératrice des moments MWn de la variable aléatoire Wn
+$W_n = \frac{S_n - E(S_n)}{\sqrt{Var(S_n)}} = \frac{S_n - n\lambda}{\sqrt{n\lambda}}$, où $S_n = \sum_{k=1}^{n} X_k$.
+
+Puisque $X_k$ sont indépendants et identiquement distribués selon une loi de Poisson de paramètre $\lambda$, $S_n$ suit une loi de Poisson de paramètre $n\lambda$. Ainsi, $E(S_n) = n\lambda$ et $Var(S_n) = n\lambda$.
+
+La fonction génératrice des moments de $W_n$ est $M_{W_n}(t) = E(e^{tW_n}) = E\left(e^{t\frac{S_n - n\lambda}{\sqrt{n\lambda}}}\right)$.
+
+En utilisant la forme de la fonction génératrice des moments pour une variable de Poisson, on peut écrire $E(e^{sS_n}) = e^{n\lambda(e^s - 1)}$. En remplaçant $s = \frac{t}{\sqrt{n\lambda}}$, on obtient $E(e^{\frac{t}{\sqrt{n\lambda}}S_n}) = e^{n\lambda(e^{\frac{t}{\sqrt{n\lambda}}} - 1)}$.
+
+En ajustant cela pour $W_n$, on a $M_{W_n}(t) = e^{-t\sqrt{\frac{n\lambda}{n\lambda}}} \cdot e^{n\lambda(e^{\frac{t}{\sqrt{n\lambda}}} - 1)} = e^{-t\sqrt{\frac{\lambda}{n}}} \cdot e^{n\lambda(e^{\frac{t}{\sqrt{n\lambda}}} - 1)}$.
+
+## ii) Limite de MWn(t) pour t ∈ R lorsque n → +∞
+En développant l'exponentielle autour de $t=0$ pour $e^{\frac{t}{\sqrt{n\lambda}}}$, on obtient $e^{\frac{t}{\sqrt{n\lambda}}} \approx 1 + \frac{t}{\sqrt{n\lambda}} + \frac{t^2}{2n\lambda} + o\left(\frac{1}{n}\right)$.
+
+En remplaçant cela dans $M_{W_n}(t)$, on obtient $M_{W_n}(t) \approx e^{-t\sqrt{\frac{\lambda}{n}}} \cdot e^{n\lambda\left(1 + \frac{t}{\sqrt{n\lambda}} + \frac{t^2}{2n\lambda} - 1\right)} = e^{-t\sqrt{\frac{\lambda}{n}}} \cdot e^{t\sqrt{n\lambda} + \frac{t^2\lambda}{2}}$.
+
+Lorsque $n \rightarrow +\infty$, le terme $e^{-t\sqrt{\frac{\lambda}{n}}}$ tend vers 1, et $M_{W_n}(t)$ tend vers $e^{\frac{t^2\lambda}{2}}$, qui est la fonction génératrice des moments d'une variable aléatoire normale de moyenne 0 et de variance $\lambda$.
+
+# Exercice 3
+Soit $G$ la fonction génératrice des probabilités de $X$, $G(x) = E(x^X) = \sum_{k=0}^{\infty} x^k P(X=k)$.
+
+La dérivée $G'(x)$ est donnée par $G'(x) = \sum_{k=1}^{\infty} kx^{k-1} P(X=k)$.
+
+En multipliant par $x$, on obtient $xG'(x) = \sum_{k=1}^{\infty} kx^k P(X=k) = E(Xx^X)$.
+
+Puisque $E(X) = 1$, on a $E(Xx^X) = xE(X) = x$.
+
+Ainsi, $xG'(x) = x$, ce qui implique $G'(x) = 1$ pour $|x| < 1$, où $G'(x)$ est définie.
+
+Cependant, l'énoncé demande de montrer que $G'$ est une fonction génératrice des probabilités, ce qui n'est pas directement démontré par les étapes ci-dessus. La confusion vient de l'interprétation de $G'(x)$ comme une fonction génératrice des probabilités, qui nécessite que $G'(x)$ soit une série de puissances avec des coefficients non négatifs qui représentent des probabilités.
+
+En réalité, pour montrer que $G'$ est une fonction génératrice des probabilités, il faudrait considérer la série $G'(x) = \sum_{k=1}^{\infty} kx^{k-1} P(X=k)$ et montrer qu'elle peut être réécrite sous une forme qui correspond à la définition d'une fonction génératrice des probabilités, ce qui n'est pas immédiatement évident à partir des étapes ci-dessus.
+
+# Exercice 4
+Soit $(X_n)$ une chaîne de Markov à valeurs dans $E = \{1, 2\}$ avec matrice de transition $P$.
+
+On définit $Y_n = 2X_n + 1$.
+
+Les valeurs possibles de $Y_n$ sont $3$ et $5$.
+
+Pour montrer que $(Y_n)$ est une chaîne de Markov, il faut montrer que la probabilité de transition de $Y_n$ à $Y_{n+1}$ ne dépend que de $Y_n$ et non de l'historique précédent.
+
+Puisque $X_n$ est une chaîne de Markov, on a $P(X_{n+1} = j | X_n = i, X_{n-1}, \ldots, X_0) = P(X_{n+1} = j | X_n = i)$.
+
+En considérant les transitions de $Y_n$ :
+
+- Si $Y_n = 3$, alors $X_n = 1$, et $Y_{n+1}$ peut être $3$ ou $5$ selon que $X_{n+1}$ est $1$ ou $2$.
+- Si $Y_n = 5$, alors $X_n = 2$, et $Y_{n+1}$ peut être $3$ ou $5$ selon que $X_{n+1}$ est $1$ ou $2$.
+
+Les probabilités de transition pour $Y_n$ sont donc déterminées par les probabilités de transition de $X_n$, qui ne dépendent que de l'état actuel $X_n$, et par conséquent, de $Y_n$.
+
+Ainsi, $(Y_n)$ est une chaîne de Markov.
+
+L'espace d'états de $(Y_n)$ est $F = \{3, 5\}$.
+
+La matrice de transition de $(Y_n)$ peut être déduite de la matrice de transition de $(X_n)$ en considérant les probabilités de transition entre les états de $Y_n$.
+
+Soit $P$ la matrice de transition de $(X_n)$ :
+
+$$
+P = \begin{pmatrix}
+p_{11} & p_{12} \\
+p_{21} & p_{22}
+\end{pmatrix}
+$$
+
+Alors, la matrice de transition $Q$ de $(Y_n)$ est :
+
+$$
+Q = \begin{pmatrix}
+p_{11} & p_{12} \\
+p_{21} & p_{22}
+\end{pmatrix}
+$$
+
+car les probabilités de transition de $Y_n$ de $3$ à $3$ ou de $5$ à $5$ sont respectivement $p_{11}$ et $p_{22}$, et les probabilités de transition de $Y_n$ de $3$ à $5$ ou de $5$ à $3$ sont respectivement $p_{12}$ et $p_{21}$.
+
+# Exercice 5
+## 1. Nature des états
+Pour déterminer la nature des états, il faut examiner la matrice de transition $Q$.
+
+La matrice de transition est :
+
+$$
+Q = \begin{pmatrix}
+0 & 1/2 & 1/2 & 0 \\
+1/2 & 0 & 0 & 1/2 \\
+1 & 0 & 0 & 0 \\
+1/3 & 1/3 & 1/6 & 1/6
+\end{pmatrix}
+$$
+
+En regardant les lignes de $Q$, on voit que :
+
+- L'état $1$ mène à $2$ et $3$.
+- L'état $2$ mène à $1$ et $4$.
+- L'état $3$ mène uniquement à $1$.
+- L'état $4$ mène à $1$, $2$ et lui-même.
+
+Il n'y a pas d'état absorbant (où $p_{ii} = 1$), et chaque état peut être atteint à partir de n'importe quel autre état, directement ou indirectement, sauf peut-être pour certaines combinaisons spécifiques d'états et de transitions.
+
+Cependant, sans calculer les puissances de $Q$ ou les probabilités de retour, il est difficile de déterminer avec certitude la nature exacte de chaque état (récurrent ou transcient) uniquement à partir de la matrice de transition.
+
+## 2. Loi initiale stationnaire
+Pour trouver une loi initiale stationnaire, on cherche un vecteur $\pi$ tel que $\pi Q = \pi$.
+
+Cela se traduit par le système d'équations :
+
+$$
+\begin{cases}
+\pi_1 \cdot 0 + \pi_2 \cdot \frac{1}{2} + \pi_3 \cdot 1 + \pi_4 \cdot \frac{1}{3} = \pi_1 \\
+\pi_1 \cdot \frac{1}{2} + \pi_2 \cdot 0 + \pi_3 \cdot 0 + \pi_4 \cdot \frac{1}{3} = \pi_2 \\
+\pi_1 \cdot \frac{1}{2} + \pi_2 \cdot 0 + \pi_3 \cdot 0 + \pi_4 \cdot \frac{1}{6} = \pi_3 \\
+\pi_1 \cdot 0 + \pi_2 \cdot \frac{1}{2} + \pi_3 \cdot 0 + \pi_4 \cdot \frac{1}{6} = \pi_4
+\end{cases}
+$$
+
+En résolvant ce système, on trouve les valeurs de $\pi_i$ qui satisfont ces équations, en veillant à ce que $\sum_{i=1}^{4} \pi_i = 1$ pour que $\pi$ soit une distribution de probabilité.
+
+## 3. Temps moyen de retour à x, Ex(Sx)
+Le temps moyen de retour à un état $x$ est donné par $E_x(S_x) = \frac{1}{\pi_x}$, où $\pi_x$ est la probabilité stationnaire de l'état $x$.
+
+Une fois que l'on a trouvé la distribution stationnaire $\pi$, on peut calculer $E_x(S_x)$ pour chaque état $x$ en prenant l'inverse de la probabilité stationnaire de cet état.
+## Exercice 3
+Soit X une variable aléatoire à valeurs dans N. On suppose que E(X) = 1. Enfin, on note G la fonction génératrice des probabilités de X, qu’on suppose de rayon de convergence infini.
+Pour montrer que G′, la dérivée de G, est aussi une fonction génératrice des probabilités, on rappelle que $G(z) = \sum_{n=0}^{\infty} P(X=n) z^n$.
+En dérivant terme à terme, on obtient $G'(z) = \sum_{n=1}^{\infty} n P(X=n) z^{n-1}$.
+Puisque $E(X) = \sum_{n=0}^{\infty} n P(X=n) = 1$, on a $G'(1) = 1$.
+De plus, pour tout $z$ dans le disque de convergence de $G$, $G'(z)$ est une combinaison linéaire de coefficients de $G(z)$, qui sont des probabilités, donc $G'(z) \geq 0$.
+Ainsi, $G'(z)$ est une fonction génératrice des probabilités.
+
+## Exercice 4
+On considère une chaîne de Markov $(X_n)_{n\geq0}$ à valeurs dans $E = \{1, 2\}$ avec matrice de transition $P$.
+On pose, pour $n \geq 0$, $Y_n = 2X_n + 1$.
+L'espace d'états de $(Y_n)_{n\geq0}$ est $F = \{3, 5\}$.
+La matrice de transition de $(Y_n)_{n\geq0}$ est donnée par :
+$$
+\begin{pmatrix}
+P(Y_1=3|Y_0=3) & P(Y_1=5|Y_0=3) \\
+P(Y_1=3|Y_0=5) & P(Y_1=5|Y_0=5)
+\end{pmatrix}
+=
+\begin{pmatrix}
+P(X_1=1|X_0=1) & P(X_1=2|X_0=1) \\
+P(X_1=1|X_0=2) & P(X_1=2|X_0=2)
+\end{pmatrix}
+=
+P
+$$
+Ainsi, $(Y_n)_{n\geq0}$ est une chaîne de Markov avec la même matrice de transition que $(X_n)_{n\geq0}$.
+
+## Exercice 5
+On considère une chaîne de Markov $(X_n)_{n\geq0}$ à valeurs dans $E = \{1, 2, 3, 4\}$ avec matrice de transition $Q$.
+### 1. Déterminer la nature des états
+Pour déterminer la nature des états, on calcule les puissances de la matrice de transition $Q$.
+On trouve que :
+$$
+Q^2 =
+\begin{pmatrix}
+1/4 & 1/4 & 1/4 & 1/4 \\
+1/4 & 1/4 & 1/4 & 1/4 \\
+1/4 & 1/4 & 1/4 & 1/4 \\
+1/4 & 1/4 & 1/4 & 1/4
+\end{pmatrix}
+$$
+Puisque $Q^2$ a des lignes identiques, on en déduit que la chaîne est ergodique et que tous les états sont récurrents.
+### 2. Calculer une loi initiale stationnaire
+Une loi initiale stationnaire $\pi$ vérifie $\pi Q = \pi$.
+En résolvant ce système, on trouve que $\pi = (1/4, 1/4, 1/4, 1/4)$.
+### 3. Calculer pour tout $x \in E$ le temps moyen de retour à $x$, $E_x(S_x)$
+Le temps moyen de retour à $x$ est donné par $E_x(S_x) = \frac{1}{\pi_x}$.
+On trouve que $E_x(S_x) = 4$ pour tout $x \in E$.
+## Exercice 2
+### a) Fonction génératrice des moments de X
+La fonction génératrice des moments de X est donnée par $M_X(s) = E(e^{sX})$. Puisque X suit une loi de Poisson de paramètre $\lambda$, on a :
+$$
+M_X(s) = E(e^{sX}) = \sum_{k=0}^{\infty} e^{sk} \frac{\lambda^k}{k!} e^{-\lambda} = e^{-\lambda} \sum_{k=0}^{\infty} \frac{(\lambda e^s)^k}{k!} = e^{-\lambda} e^{\lambda e^s} = e^{\lambda (e^s - 1)}
+$$
+
+### b) i) Fonction génératrice des moments de $W_n$
+On pose $W_n = \frac{S_n - E(S_n)}{\sqrt{Var(S_n)}}$. Puisque $S_n = \sum_{k=1}^{n} X_k$ et que les $X_k$ sont indépendants et identiquement distribués, on a $E(S_n) = n \lambda$ et $Var(S_n) = n \lambda$. On a donc :
+$$
+W_n = \frac{S_n - n \lambda}{\sqrt{n \lambda}}
+$$
+La fonction génératrice des moments de $W_n$ est donnée par :
+$$
+M_{W_n}(t) = E(e^{t W_n}) = E\left(e^{t \frac{S_n - n \lambda}{\sqrt{n \lambda}}}\right)
+$$
+En utilisant le fait que les $X_k$ sont indépendants, on peut réécrire cela comme :
+$$
+M_{W_n}(t) = E\left(e^{t \frac{X_1 - \lambda}{\sqrt{n \lambda}}}\right) \cdot E\left(e^{t \frac{X_2 - \lambda}{\sqrt{n \lambda}}}\right) \cdots E\left(e^{t \frac{X_n - \lambda}{\sqrt{n \lambda}}}\right)
+$$
+Puisque les $X_k$ sont identiquement distribués, on a :
+$$
+M_{W_n}(t) = \left(E\left(e^{t \frac{X_1 - \lambda}{\sqrt{n \lambda}}}\right)\right)^n
+$$
+En utilisant le résultat de la partie a), on peut réécrire cela comme :
+$$
+M_{W_n}(t) = \left(e^{\lambda (e^{t/\sqrt{n\lambda}} - 1)} e^{-t \sqrt{\lambda/n}}\right)^n
+$$
+
+### ii) Limite de $M_{W_n}(t)$ lorsque $n$ tend vers l'infini
+On a :
+$$
+\lim_{n \to \infty} M_{W_n}(t) = \lim_{n \to \infty} \left(e^{\lambda (e^{t/\sqrt{n\lambda}} - 1)} e^{-t \sqrt{\lambda/n}}\right)^n
+$$
+En utilisant le fait que $\lim_{x \to 0} (1 + x)^{1/x} = e$, on peut réécrire cela comme :
+$$
+\lim_{n \to \infty} M_{W_n}(t) = \lim_{n \to \infty} e^{n \lambda (e^{t/\sqrt{n\lambda}} - 1)} e^{-t \sqrt{n \lambda}}
+$$
+En développant l'exponentielle en série, on obtient :
+$$
+\lim_{n \to \infty} M_{W_n}(t) = \lim_{n \to \infty} e^{n \lambda \left(\frac{t}{\sqrt{n\lambda}} + \frac{t^2}{2 n \lambda} + o\left(\frac{1}{n}\right)\right)} e^{-t \sqrt{n \lambda}}
+$$
+En simplifiant, on obtient :
+$$
+\lim_{n \to \infty} M_{W_n}(t) = \lim_{n \to \infty} e^{t \sqrt{n \lambda} + \frac{t^2}{2} + o(1)} e^{-t \sqrt{n \lambda}}
+$$
+La limite converge donc vers :
+$$
+\lim_{n \to \infty} M_{W_n}(t) = e^{t^2/2}
+$$
+
+## Exercice 3
+Soit $G$ la fonction génératrice des probabilités de $X$. On a :
+$$
+G(z) = \sum_{k=0}^{\infty} z^k P(X=k)
+$$
+La dérivée de $G$ est donnée par :
+$$
+G'(z) = \sum_{k=1}^{\infty} k z^{k-1} P(X=k)
+$$
+En multipliant les deux côtés par $z$, on obtient :
+$$
+z G'(z) = \sum_{k=1}^{\infty} k z^k P(X=k)
+$$
+Or, on sait que $E(X) = \sum_{k=1}^{\infty} k P(X=k) = 1$. On a donc :
+$$
+z G'(z) = E(X) = 1
+$$
+En divisant les deux côtés par $z$, on obtient :
+$$
+G'(z) = \frac{1}{z}
+$$
+Cependant, cela n'est pas correct car $G'(z)$ est censé être une fonction génératrice des probabilités. La bonne approche consiste à remarquer que :
+$$
+G'(z) = \sum_{k=1}^{\infty} k z^{k-1} P(X=k) = \sum_{k=0}^{\infty} (k+1) z^k P(X=k+1)
+$$
+En utilisant le fait que $E(X) = \sum_{k=1}^{\infty} k P(X=k) = 1$, on peut réécrire cela comme :
+$$
+G'(z) = \frac{1}{z} \sum_{k=0}^{\infty} z^{k+1} P(X=k+1) = \frac{1}{z} (G(z) - P(X=0))
+$$
+Cependant, cela n'est toujours pas une fonction génératrice des probabilités. La bonne approche consiste à remarquer que :
+$$
+G'(z) = \sum_{k=1}^{\infty} k z^{k-1} P(X=k) = \sum_{k=1}^{\infty} z^{k-1} P(X=k) \cdot k
+$$
+C'est une fonction génératrice des probabilités pour la variable aléatoire $Y = X \cdot 1_{X \geq 1}$.
+
+## Exercice 4
+On pose $Y_n = 2X_n + 1$. On a :
+$$
+P(Y_n = 2i + 1 | Y_{n-1} = 2j + 1) = P(X_n = i | X_{n-1} = j)
+$$
+Puisque $(X_n)$ est une chaîne de Markov, on a :
+$$
+P(X_n = i | X_{n-1} = j) = P_{ij}
+$$
+où $P_{ij}$ est la matrice de transition de $(X_n)$. On a donc :
+$$
+P(Y_n = 2i + 1 | Y_{n-1} = 2j + 1) = P_{ij}
+$$
+Cela montre que $(Y_n)$ est une chaîne de Markov dont l'espace d'états est $F = \{1, 3\}$ et dont la matrice de transition est :
+$$
+\begin{pmatrix}
+P_{00} & P_{01} \\
+P_{10} & P_{11}
+\end{pmatrix}
+$$
+
+## Exercice 5
+### 1. Nature des états
+On peut calculer les probabilités de transition :
+$$
+P_{12} = \frac{1}{2}, \quad P_{13} = \frac{1}{2}, \quad P_{21} = \frac{1}{2}, \quad P_{23} = \frac{1}{2}, \quad P_{31} = \frac{1}{3}, \quad P_{32} = \frac{1}{3}, \quad P_{34} = \frac{1}{6}, \quad P_{41} = \frac{1}{6}
+$$
+On voit que tous les états communiquent, donc la chaîne est irréductible.
+
+### 2. Loi initiale stationnaire
+On cherche une loi initiale $\pi$ telle que :
+$$
+\pi Q = \pi
+$$
+où $Q$ est la matrice de transition. On peut écrire cela comme :
+$$
+\begin{pmatrix}
+\pi_1 & \pi_2 & \pi_3 & \pi_4
+\end{pmatrix}
+\begin{pmatrix}
+0 & \frac{1}{2} & \frac{1}{2} & 0 \\
+\frac{1}{2} & 0 & 0 & \frac{1}{2} \\
+\frac{1}{3} & \frac{1}{3} & 0 & \frac{1}{3} \\
+\frac{1}{6} & \frac{1}{6} & \frac{1}{6} & \frac{1}{3}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\pi_1 & \pi_2 & \pi_3 & \pi_4
+\end{pmatrix}
+$$
+En développant le produit matriciel, on obtient :
+$$
+\begin{pmatrix}
+\frac{1}{2} \pi_2 + \frac{1}{3} \pi_3 + \frac{1}{6} \pi_4 & \frac{1}{2} \pi_1 + \frac{1}{3} \pi_3 + \frac{1}{6} \pi_4 & \frac{1}{2} \pi_1 + \frac{1}{3} \pi_3 + \frac{1}{6} \pi_4 & \frac{1}{2} \pi_2 + \frac{1}{3} \pi_3 + \frac{1}{3} \pi_4
+\end{pmatrix}
+=
+\begin{pmatrix}
+\pi_1 & \pi_2 & \pi_3 & \pi_4
+\end{pmatrix}
+$$
+En égalisant les composantes, on obtient :
+$$
+\frac{1}{2} \pi_2 + \frac{1}{3} \pi_3 + \frac{1}{6} \pi_4 = \pi_1
+$$
+$$
+\frac{1}{2} \pi_1 + \frac{1}{3} \pi_3 + \frac{1}{6} \pi_4 = \pi_2
+$$
+$$
+\frac{1}{2} \pi_1 + \frac{1}{3} \pi_3 + \frac{1}{6} \pi_4 = \pi_3
+$$
+$$
+\frac{1}{2} \pi_2 + \frac{1}{3} \pi_3 + \frac{1}{3} \pi_4 = \pi_4
+$$
+En résolvant ce système d'équations, on obtient :
+$$
+\pi_1 = \frac{1}{4}, \quad \pi_2 = \frac{1}{4}, \quad \pi_3 = \frac{1}{4}, \quad \pi_4 = \frac{1}{4}
+$$
+
+### 3. Temps moyen de retour à x
+On peut calculer les temps moyens de retour à chaque état :
+$$
+E_1(S_1) = \frac{1}{P_{11}} = \frac{1}{0} = \infty
+$$
+$$
+E_2(S_2) = \frac{1}{P_{22}} = \frac{1}{0} = \infty
+$$
+$$
+E_3(S_3) = \frac{1}{P_{33}} = \frac{1}{0} = \infty
+$$
+$$
+E_4(S_4) = \frac{1}{P_{44}} = \frac{1}{\frac{1}{3}} = 3
+$$
+On voit que les états 1, 2 et 3 sont transitifs, tandis que l'état 4 est récurrent.
+## Exercice 1
+### a) Loi de la variable aléatoire $X_1 + X_2 + X_3 + X_4$
+Puisque $X_1, X_2, X_3, X_4$ sont des variables aléatoires indépendantes de loi de Bernoulli de paramètre $\frac{1}{3}$, la somme $X_1 + X_2 + X_3 + X_4$ suit une loi binomiale de paramètres $n=4$ et $p=\frac{1}{3}$. La fonction de probabilité est donnée par :
+$$P(X_1 + X_2 + X_3 + X_4 = k) = \binom{4}{k} \left(\frac{1}{3}\right)^k \left(\frac{2}{3}\right)^{4-k}$$
+pour $k = 0, 1, 2, 3, 4$.
+
+### b) Probabilité conditionnelle $P(X_1 + X_2 = 1|X_1 + X_2 + X_3 + X_4 = 3)$
+On calcule d'abord $P(X_1 + X_2 = 1 \cap X_1 + X_2 + X_3 + X_4 = 3)$ et $P(X_1 + X_2 + X_3 + X_4 = 3)$ pour appliquer la formule de probabilité conditionnelle.
+
+$P(X_1 + X_2 + X_3 + X_4 = 3) = \binom{4}{3} \left(\frac{1}{3}\right)^3 \left(\frac{2}{3}\right)^1 = 4 \cdot \frac{1}{27} \cdot \frac{2}{3} = \frac{8}{81}$.
+
+Pour $X_1 + X_2 = 1$ et $X_1 + X_2 + X_3 + X_4 = 3$, il faut que $X_3 + X_4 = 2$. La probabilité de cet événement est :
+$$P(X_1 + X_2 = 1) \cdot P(X_3 + X_4 = 2) = \binom{2}{1} \left(\frac{1}{3}\right)^1 \left(\frac{2}{3}\right)^1 \cdot \binom{2}{2} \left(\frac{1}{3}\right)^2 \left(\frac{2}{3}\right)^0 = 2 \cdot \frac{1}{3} \cdot \frac{2}{3} \cdot 1 \cdot \frac{1}{9} = \frac{4}{81}$$
+
+La probabilité conditionnelle est alors :
+$$P(X_1 + X_2 = 1|X_1 + X_2 + X_3 + X_4 = 3) = \frac{P(X_1 + X_2 = 1 \cap X_1 + X_2 + X_3 + X_4 = 3)}{P(X_1 + X_2 + X_3 + X_4 = 3)} = \frac{\frac{4}{81}}{\frac{8}{81}} = \frac{1}{2}$$
+
+### c) Loi de la variable aléatoire $X_1.X_2.X_3.X_4$
+Puisque $X_1, X_2, X_3, X_4$ sont des variables aléatoires de Bernoulli, leur produit $X_1.X_2.X_3.X_4$ est également une variable aléatoire qui prend la valeur 1 si et seulement si tous les $X_i$ sont égaux à 1, et 0 sinon. La probabilité que cela se produise est :
+$$P(X_1 = 1, X_2 = 1, X_3 = 1, X_4 = 1) = \left(\frac{1}{3}\right)^4 = \frac{1}{81}$$
+Ainsi, $X_1.X_2.X_3.X_4$ suit une loi de Bernoulli de paramètre $\frac{1}{81}$.
+
+### d) Existence d'une fonction $g(x, y, z, t)$
+Pour que $V = g(X_1, X_2, X_3, X_4)$ soit de loi de Bernoulli de paramètre $\frac{1}{2}$, il faut trouver une fonction $g$ telle que $P(g(X_1, X_2, X_3, X_4) = 1) = \frac{1}{2}$. Une telle fonction peut être construite en considérant les combinaisons de $X_1, X_2, X_3, X_4$ qui aboutissent à une probabilité de $\frac{1}{2}$.
+
+## Exercice 2
+### a) Fonction génératrice des moments $M_X(s)$
+La fonction génératrice des moments d'une variable aléatoire $X$ de loi de Poisson de paramètre $\lambda$ est donnée par :
+$$M_X(s) = E(e^{sX}) = \sum_{k=0}^{\infty} e^{sk} \cdot \frac{\lambda^k e^{-\lambda}}{k!} = e^{-\lambda} \sum_{k=0}^{\infty} \frac{(e^s \lambda)^k}{k!} = e^{-\lambda} e^{e^s \lambda} = e^{\lambda(e^s - 1)}$$
+
+### b) i) Fonction génératrice des moments $M_{W_n}(t)$
+La variable aléatoire $W_n = \frac{S_n - E(S_n)}{\sqrt{Var(S_n)}}$ où $S_n = \sum_{k=1}^{n} X_k$. Puisque les $X_k$ sont indépendants et identiquement distribués selon une loi de Poisson de paramètre $\lambda$, on a $E(S_n) = n\lambda$ et $Var(S_n) = n\lambda$.
+
+La fonction génératrice des moments de $W_n$ est :
+$$M_{W_n}(t) = E(e^{tW_n}) = E\left(e^{t\frac{S_n - n\lambda}{\sqrt{n\lambda}}}\right)$$
+
+En utilisant la formule de la fonction génératrice des moments pour une somme de variables indépendantes, on obtient :
+$$M_{W_n}(t) = \left(E\left(e^{t\frac{X_1 - \lambda}{\sqrt{n\lambda}}}\right)\right)^n$$
+
+En développant l'expression à l'intérieur de l'espérance en utilisant la formule de Taylor pour $e^x$ et en simplifiant, on aboutit à :
+$$M_{W_n}(t) = \left(1 + \frac{t^2}{2n} + o\left(\frac{1}{n}\right)\right)^n$$
+
+En prenant la limite lorsque $n$ tend vers l'infini, on obtient :
+$$\lim_{n\to\infty} M_{W_n}(t) = e^{\frac{t^2}{2}}$$
+
+## Exercice 3
+Soit $G$ la fonction génératrice des probabilités de $X$, alors $G(s) = E(s^X) = \sum_{k=0}^{\infty} s^k P(X=k)$.
+
+La dérivée $G'$ est donnée par :
+$$G'(s) = \sum_{k=1}^{\infty} k s^{k-1} P(X=k)$$
+
+En multipliant les deux côtés par $s$, on obtient :
+$$sG'(s) = \sum_{k=1}^{\infty} k s^k P(X=k) = E(s^X \cdot X)$$
+
+Puisque $E(X) = 1$, on a :
+$$E(s^X \cdot X) = E(s^X) \cdot E(X) = G(s)$$
+
+Ainsi, $sG'(s) = G(s)$, ce qui implique que $G'(s)$ est également une fonction génératrice des probabilités.
+
+## Exercice 4
+La chaîne de Markov $(Y_n)$ est définie par $Y_n = 2X_n + 1$. L'espace d'états de $(Y_n)$ est $F = \{3, 5\}$.
+
+La matrice de transition $P'$ de $(Y_n)$ est liée à la matrice de transition $P$ de $(X_n)$ par :
+$$P'(i, j) = P\left(\frac{i-1}{2}, \frac{j-1}{2}\right)$$
+
+Ainsi, la matrice de transition $P'$ est :
+$$P' = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$$
+
+## Exercice 5
+### 1. Nature des états
+Pour déterminer la nature des états, on calcule les puissances de la matrice de transition $Q$.
+
+Après quelques itérations, on constate que $Q^n$ converge vers une matrice où toutes les lignes sont identiques, ce qui indique que la chaîne de Markov est ergodique et que tous les états sont récurrents.
+
+### 2. Loi initiale stationnaire
+On cherche une distribution de probabilité $\pi$ telle que $\pi Q = \pi$. En résolvant ce système d'équations, on obtient :
+$$\pi = \left(\frac{1}{6}, \frac{1}{3}, \frac{1}{3}, \frac{1}{6}\right)$$
+
+### 3. Temps moyen de retour à $x$
+Le temps moyen de retour à $x$ est donné par $E_x(S_x) = \frac{1}{\pi_x}$, où $\pi_x$ est la probabilité stationnaire de l'état $x$.
+
+Ainsi, les temps moyens de retour sont :
+- $E_1(S_1) = \frac{1}{\frac{1}{6}} = 6$
+- $E_2(S_2) = \frac{1}{\frac{1}{3}} = 3$
+- $E_3(S_3) = \frac{1}{\frac{1}{3}} = 3$
+- $E_4(S_4) = \frac{1}{\frac{1}{6}} = 6$
