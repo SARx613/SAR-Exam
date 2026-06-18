@@ -391,6 +391,22 @@ if not answer_markdown.strip():
     print("Fatal Error: All models completely failed to generate any response.")
     sys.exit(1)
 
+# Sauvegarde de la réponse brute du LLM dans le dossier output/
+# - un fichier horodaté pour garder l'historique
+# - correction_latest.txt toujours à jour (écrasé à chaque exécution)
+try:
+    os.makedirs("output", exist_ok=True)
+    safe_name = target_filename.replace('.pdf', '').replace(' ', '_')
+    timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
+    history_path = os.path.join("output", f"correction_{safe_name}_{timestamp}.txt")
+    latest_path = os.path.join("output", "correction_latest.txt")
+    for path in (history_path, latest_path):
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(answer_markdown)
+    print(f"Réponse du LLM sauvegardée dans {history_path} et {latest_path}")
+except Exception as e:
+    print(f"⚠️ Impossible de sauvegarder la réponse dans un fichier : {e}")
+
 print("Processing output and generating HTML...")
 html_content = markdown.markdown(
     answer_markdown, 
