@@ -237,20 +237,22 @@ def call_model(system_msg, user_msg, max_tokens):
         return _call_groq_fallback(system_msg, user_msg, max_tokens)
 # Generate an effective prompt requesting L3 Math level assistance
 prompt = f"""
-Tu es un brillant professeur de mathématiques à l'université, et tu dois produire la CORRECTION OFFICIELLE PARFAITE (visant la note de 20/20) d'un examen de 3ème année de Licence (L3) d'Algèbre.
+Tu es un brillant professeur de mathématiques à l'université, et tu produis la CORRECTION OFFICIELLE d'un examen de 3ème année de Licence (L3) d'Algèbre. Tu vises la note de 20/20 : la copie doit être JUSTE, RIGOUREUSE et COMPLÈTE sur tout ce qui est demandé. Mais tu vises EXACTEMENT 20/20, pas plus : pas de sur-développement, pas de zèle inutile.
 
 RÈGLES ABSOLUES :
-1. NE CORRIGE PAS une copie d'élève. Tu dois RÉSOUDRE TOI-MÊME l'examen de A à Z.
-2. AUCUNE FAINÉANTISE. Interdiction formelle d'utiliser les expressions "il suffit de", "on peut montrer que", ou "cela peut être fait". TU DOIS EFFECTUER LA PREUVE EN ENTIER SOUS MES YEUX !
-3. Aucun calcul magique. Pour les calculs de noyau, valeurs propres, décompositions de Dunford, etc., tu dois écrire la matrice, écrire le système linéaire, et le résoudre étape par étape sans sauter d'étape.
-4. RÈGLE CRUCIALE DE FORMATAGE (MARKDOWN + MATHJAX) : 
+1. Résous TOI-MÊME l'examen de A à Z. Réponds correctement et rigoureusement à chaque question posée.
+2. NE FAIS RIEN AU-DELÀ DES CONSIGNES. Pas de remarques bonus, pas d'ouvertures, pas de généralisations ou de prolongements non demandés. Ce qui ne rapporte aucun point ne doit pas figurer dans la copie.
+3. PAS DE RAPPEL DE COURS INUTILE. Ne réénonce pas les définitions, théorèmes ou propriétés du cours sauf si la question le demande explicitement. Tu peux citer un théorème par son nom et l'appliquer directement.
+4. NE JUSTIFIE PAS L'ÉVIDENT. Si une étape est triviale ou immédiate, donne directement le résultat sans la détailler. Garde les calculs intermédiaires uniquement quand ils sont nécessaires à la justesse de la preuve ou attendus par le barème (résolution de système, calcul de valeurs propres, etc.).
+5. Le bon niveau de détail est celui qui rapporte les points : ni moins (réponse non justifiée), ni plus (paraphrase, redites, calculs superflus). Vise la copie qu'un correcteur noterait 20/20 sans la trouver trop longue.
+6. RÈGLE CRUCIALE DE FORMATAGE (MARKDOWN + MATHJAX) :
    - La structure du document DOIT être en Markdown strict (utilise '#', '##' pour les titres, des tirets '-' ou des '1.' pour les listes, '**gras**').
    - INTERDICTION ABSOLUE d'utiliser les commandes structurelles LaTeX telles que \section, \subsection, \textbf, \begin{enumerate}, \item, etc.
    - Utilise LaTeX *uniquement* pour les expressions mathématiques.
    - Les équations en ligne doivent être encadrées par `$` (exemple: $x^2 + 1$).
    - Les équations hors texte doivent être centrées et encadrées par `$$` (exemple: $$ \int f(x) dx $$).
    - N'indente JAMAIS le début de tes lignes avec des espaces (cela crée des blocs de code qui cassent le rendu mathématique).
-Voici le sujet d'examen intégral à résoudre de la 1ère à la toute dernière ligne avec une rigueur absolue :
+Voici le sujet d'examen à résoudre, question par question, de manière juste, rigoureuse et sans sur-développement :
 
 {extracted_text}
 """
@@ -265,9 +267,9 @@ except Exception as e:
 safety_buffer = 150
 answer_markdown = ""
 
-system_role = "Tu es un professeur de mathématiques d'université intraitable et hyper-rigoureux. Tu dois fournir une copie corrigée d'excellence. INTERDICTION D'ÊTRE PARESSEUX : tu dois prouver absolument tout ce que tu affirmes et écrire tous les calculs matriciels intermédiaires. Interdiction d'utiliser les formules 'on peut voir que' ou 'il est facile de montrer'. Utilise exclusivement le Markdown pour la structure (titres, listes) et LaTeX ($ et $$) pour les mathématiques. N'utilise jamais les commandes \\section ou \\begin{enumerate}. N'indente pas tes lignes."
+system_role = "Tu es un professeur de mathématiques d'université qui rédige une correction d'examen visant la note de 20/20 : JUSTE, RIGOUREUSE et COMPLÈTE sur tout ce qui est demandé, mais EXACTEMENT 20/20, pas plus. Réponds uniquement à ce qui est demandé, sans rien ajouter au-delà des consignes (pas de remarques bonus ni de prolongements). PAS de rappel de cours inutile : cite les théorèmes et applique-les directement. NE JUSTIFIE PAS l'évident : si une étape est triviale, donne directement le résultat. Garde les calculs intermédiaires uniquement quand ils sont nécessaires à la preuve ou attendus par le barème. Vise le bon niveau de détail : ni réponse non justifiée, ni sur-développement. Utilise exclusivement le Markdown pour la structure (titres, listes) et LaTeX ($ et $$) pour les mathématiques. N'utilise jamais les commandes \\section ou \\begin{enumerate}. N'indente pas tes lignes."
 full_answer = ""
-current_instruction = "Résous l'intégralité de l'examen de la première à la dernière question."
+current_instruction = "Résous l'intégralité de l'examen, de la première à la dernière question, de manière juste et rigoureuse, sans sur-développement."
 max_iterations = 8
 
 # Limite de tokens selon le provider
