@@ -1,0 +1,68 @@
+
+# Correction — Partiel LU2MA211 Intégrale de Lebesgue (25 mars 2022)
+
+---
+
+## Exercice 1
+
+**Théorème de convergence dominée.** Soit $(f_n)$ une suite de fonctions mesurables sur un espace mesuré $(\Omega, \mathcal{A}, \mu)$. On suppose :
+
+- $f_n \to f$ presque partout,
+- il existe $g \in L^1(\mu)$ telle que $|f_n| \leq g$ p.p. pour tout $n$.
+
+Alors $f \in L^1(\mu)$ et $\displaystyle\int f_n \, d\mu \to \int f \, d\mu$.
+
+---
+
+## Exercice 2
+
+**a)** On écrit
+
+$$I_n = \frac{1}{n}\sum_{k=0}^{n} \frac{k}{n}\,e^{k/n},$$
+
+qui est une somme de Riemann de $f(x) = xe^x$ sur $[0,1]$ associée à la subdivision régulière de pas $1/n$. Donc
+
+$$\lim_{n\to+\infty} I_n = \int_0^1 x e^x \, dx.$$
+
+**b)** Par intégration par parties ($u = x$, $v' = e^x$) :
+
+$$\int_0^1 x e^x \, dx = \bigl[xe^x\bigr]_0^1 - \int_0^1 e^x \, dx = e - \bigl[e^x\bigr]_0^1 = e - (e - 1) = \boxed{1}.$$
+
+---
+
+## Exercice 3
+
+**a)** Pour tout $n \in \mathbb{N}^*$, $f_n$ est continue sur $[0,1]$ (compact), donc bornée et intégrable sur $[0,1]$ : $J_n$ est bien défini.
+
+**b)** Pour $x \in [0,1[$, on a $\cos^2\!\bigl(\frac{\pi}{2}x\bigr) > 0$ (car $\frac{\pi}{2}x \in [0, \frac{\pi}{2}[$, donc le cosinus est strictement positif), d'où $e^{-\cos^2(\pi x/2)} < 1$, ce qui donne $xe^{-\cos^2(\pi x/2)} < x \leq 1$. Donc $0 \leq f_n(x) \to 0$ quand $n \to +\infty$.
+
+Pour $x = 1$ : $\cos\!\bigl(\frac{\pi}{2}\bigr) = 0$, donc $f_n(1) = (1 \cdot e^0)^n = 1^n = 1 \to 1$.
+
+**c)** On a $|f_n(x)| \leq 1$ pour tout $x \in [0,1]$ et tout $n$ (fonction dominante intégrable sur $[0,1]$), et $f_n \to 0$ p.p. (le point $\{1\}$ est de mesure nulle). Par le théorème de convergence dominée :
+
+$$\lim_{n\to+\infty} J_n = \int_0^1 0 \, dx = \boxed{0}.$$
+
+---
+
+## Exercice 4
+
+**a)** On majore $|f_1(t)|$ en distinguant deux régions.
+
+- Sur $]0,1]$ : $\sqrt{t+t^2} \geq \sqrt{t}$, donc $|f_1(t)| \leq \dfrac{1}{\sqrt{t}}$, qui est intégrable sur $]0,1]$ (critère de Riemann, exposant $\frac{1}{2} < 1$).
+- Sur $[1,+\infty[$ : $\sqrt{t+t^2} \geq t$, donc $|f_1(t)| \leq \dfrac{1}{t^2}$, qui est intégrable sur $[1,+\infty[$ (critère de Riemann, exposant $2 > 1$).
+
+Ainsi $f_1 \in L^1(\mathbb{R})$.
+
+**b)** Pour tout $t \in \mathbb{R}$, $e^{-t^2} > 0$ donc $1 + e^{-t^2} \leq 2$, ce qui donne
+
+$$f_2(t) = \frac{1}{1+e^{-t^2}} \geq \frac{1}{2}.$$
+
+Comme $f_2$ est minorée par $\frac{1}{2}$ sur $\mathbb{R}$, elle n'est pas intégrable sur $\mathbb{R}$.
+
+---
+
+## Exercice 5
+
+On pose $x = \sin t$, $dx = \cos t \, dt$. Quand $t$ varie de $0$ à $\pi/2$, $x$ varie de $0$ à $1$. De plus, $\cos^2 t = 1 - \sin^2 t = 1 - x^2$, donc $2 - \cos^2 t = 1 + x^2$. Ainsi :
+
+$$I = \int_0^1 \frac{\cos t}{1+x^2} \cdot \frac{dx}{\cos t} = \int_0^1 \frac{dx}{1+x^2} = \bigl[\arctan x\bigr]_0^1 = \boxed{\dfrac{\pi}{4}}.$$
