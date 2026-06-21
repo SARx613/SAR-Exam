@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test rendu équations</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            chtml: {
+                scale: 1.25,
+                minScale: 0.85,
+                matchFontHeight: false,
+                displayAlign: 'center',
+                linebreaks: { automatic: true }
+            }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; font-size: 32px; line-height: 1.6; padding: 2rem 3rem; overflow-x: hidden; }
+        h2 { color: #b00; }
+        .ok { color: #060; }
+        .box { border: 2px solid #000; padding: 1rem 1.5rem; margin: 1rem 0; }
+        hr { margin: 2.5rem 0; }
+    </style>
+</head>
+<body>
+
+<h2>❌ AVANT — fraction en exposant (illisible, ce que tu avais)</h2>
+<div class="box">
+$$ M_{W_n}(t) = \left( \frac{p\, e^{\frac{tp}{\sqrt{n(1-p)}}}}{1 - (1-p) e^{\frac{tp}{\sqrt{n(1-p)}}}} \right)^n \cdot e^{-\frac{tn\,p}{\sqrt{n(1-p)}} \cdot \frac{1}{p}} $$
+</div>
+
+<hr>
+
+<h2 class="ok">✅ APRÈS — avec \exp(...) et découpage en aligned (nouvelle règle)</h2>
+<div class="box">
+En posant $\displaystyle u = \frac{tp}{\sqrt{n(1-p)}}$, on obtient :
+$$
+\begin{aligned}
+M_{W_n}(t)
+&= \left( \frac{p\,\exp(u)}{1 - (1-p)\,\exp(u)} \right)^{n} \cdot \exp\!\left(-\frac{t\sqrt{n}}{\sqrt{1-p}}\right) \\
+&= \left( \frac{p\,\exp(u)}{1 - (1-p)\,\exp(u)} \right)^{n} \exp(-n u)
+\end{aligned}
+$$
+</div>
+
+<p>Comparé : dans la version ✅, l'argument de l'exponentielle reste en <b>taille pleine</b> entre parenthèses, et la longue chaîne est coupée à chaque <b>=</b>.</p>
+
+</body>
+</html>

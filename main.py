@@ -250,8 +250,24 @@ RÈGLES ABSOLUES :
    - INTERDICTION ABSOLUE d'utiliser les commandes structurelles LaTeX telles que \section, \subsection, \textbf, \begin{enumerate}, \item, etc.
    - Utilise LaTeX *uniquement* pour les expressions mathématiques.
    - Les équations en ligne doivent être encadrées par `$` (exemple: $x^2 + 1$).
+   - Dès qu'une équation EN LIGNE contient une fraction, un indice/exposant imbriqué ou une somme, commence-la par `\displaystyle` pour qu'elle ne soit pas rapetissée (exemple: $\displaystyle \frac{{a_{{i,1}}}}{{b^{{n+1}}}}$).
    - Les équations hors texte doivent être centrées et encadrées par `$$` (exemple: $$ \int f(x) dx $$).
    - N'indente JAMAIS le début de tes lignes avec des espaces (cela crée des blocs de code qui cassent le rendu mathématique).
+7. RÈGLE ANTI-DÉBORDEMENT (TRÈS IMPORTANTE POUR LA LISIBILITÉ) :
+   - Une équation hors texte ne doit JAMAIS être une longue ligne unique qui dépasserait la largeur de l'écran.
+   - Dès qu'une équation comporte plusieurs signes `=` (chaîne d'égalités) ou est longue, tu DOIS la couper sur plusieurs lignes avec l'environnement `aligned`, en allant à la ligne à CHAQUE signe `=`, aligné sur le `=`.
+   - Modèle EXACT à suivre :
+     $$\begin{{aligned}} f(x) &= \text{{première expression}} \\\\ &= \text{{expression suivante}} \\\\ &= \text{{résultat final}} \end{{aligned}}$$
+   - De même, coupe les longues sommes ou produits avant un `+` ou un `-` plutôt que de laisser une ligne déborder.
+   - Garde chaque ligne d'équation courte : mieux vaut 4 lignes courtes et lisibles qu'une seule ligne illisible qui sort de la page.
+8. RÈGLE ANTI-EXPOSANTS-MINUSCULES (ABSOLUMENT PRIORITAIRE POUR LA LISIBILITÉ) :
+   - INTERDICTION FORMELLE de mettre une fraction, une racine carrée ou toute expression complexe en exposant ou en indice. Ce sont ces exposants en cascade qui deviennent illisibles.
+   - NE JAMAIS écrire `e^{{\frac{{...}}{{...}}}}`. À la place, utilise TOUJOURS la notation `\exp(...)` qui garde l'argument en TAILLE PLEINE entre parenthèses.
+     Exemple INTERDIT : $e^{{\frac{{tp}}{{\sqrt{{n(1-p)}}}}}}$
+     Exemple OBLIGATOIRE : $\exp\!\left(\dfrac{{tp}}{{\sqrt{{n(1-p)}}}}\right)$
+   - De même, n'imbrique jamais une fraction dans un indice. Si un indice ou un exposant est compliqué, POSE une notation intermédiaire en taille normale. Exemple : « En posant $u = \dfrac{{tp}}{{\sqrt{{n(1-p)}}}}$, on a $\exp(u)$. »
+   - Les indices doivent rester simples (une lettre, un chiffre, au plus deux niveaux comme $a_{{i,1}}$). Jamais d'indice d'indice d'indice.
+   - Règle d'or : si un lecteur humain devrait plisser les yeux pour distinguer un 1, un i ou un 2 dans un exposant, c'est que tu dois réécrire l'expression avec \exp(...) ou une variable intermédiaire.
 Voici le sujet d'examen à résoudre, question par question, de manière juste, rigoureuse et sans sur-développement :
 
 {extracted_text}
@@ -267,7 +283,7 @@ except Exception as e:
 safety_buffer = 150
 answer_markdown = ""
 
-system_role = "Tu es un professeur de mathématiques d'université qui rédige une correction d'examen visant la note de 20/20 : JUSTE, RIGOUREUSE et COMPLÈTE sur tout ce qui est demandé, mais EXACTEMENT 20/20, pas plus. Réponds uniquement à ce qui est demandé, sans rien ajouter au-delà des consignes (pas de remarques bonus ni de prolongements). PAS de rappel de cours inutile : cite les théorèmes et applique-les directement. NE JUSTIFIE PAS l'évident : si une étape est triviale, donne directement le résultat. Garde les calculs intermédiaires uniquement quand ils sont nécessaires à la preuve ou attendus par le barème. Vise le bon niveau de détail : ni réponse non justifiée, ni sur-développement. Utilise exclusivement le Markdown pour la structure (titres, listes) et LaTeX ($ et $$) pour les mathématiques. N'utilise jamais les commandes \\section ou \\begin{enumerate}. N'indente pas tes lignes."
+system_role = "Tu es un professeur de mathématiques d'université qui rédige une correction d'examen visant la note de 20/20 : JUSTE, RIGOUREUSE et COMPLÈTE sur tout ce qui est demandé, mais EXACTEMENT 20/20, pas plus. Réponds uniquement à ce qui est demandé, sans rien ajouter au-delà des consignes (pas de remarques bonus ni de prolongements). PAS de rappel de cours inutile : cite les théorèmes et applique-les directement. NE JUSTIFIE PAS l'évident : si une étape est triviale, donne directement le résultat. Garde les calculs intermédiaires uniquement quand ils sont nécessaires à la preuve ou attendus par le barème. Vise le bon niveau de détail : ni réponse non justifiée, ni sur-développement. Utilise exclusivement le Markdown pour la structure (titres, listes) et LaTeX ($ et $$) pour les mathématiques. N'utilise jamais les commandes \\section ou \\begin{enumerate}. N'indente pas tes lignes. ANTI-DÉBORDEMENT : ne produis jamais une longue équation sur une seule ligne ; dès qu'il y a plusieurs '=' ou qu'une équation est longue, coupe-la avec \\begin{aligned} en allant à la ligne à chaque '=' (aligné sur le '='), pour qu'aucune équation ne dépasse la largeur de l'écran. RÈGLE DE LISIBILITÉ ABSOLUE : ne mets JAMAIS une fraction ou une racine en exposant (interdiction de e^{\\frac{...}{...}}) ; écris toujours \\exp(...) avec l'argument en taille pleine entre parenthèses, ou pose une variable intermédiaire en taille normale. Pas d'indice d'indice ni d'exposant compliqué : si un exposant/indice contient une fraction ou plusieurs symboles, réécris l'expression avec \\exp(...) ou une notation auxiliaire pour que tout reste lisible."
 full_answer = ""
 current_instruction = "Résous l'intégralité de l'examen, de la première à la dernière question, de manière juste et rigoureuse, sans sur-développement."
 max_iterations = 8
@@ -425,17 +441,24 @@ html_page = f"""<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Correction - {display_title}</title>
 
-    <!-- Configure MathJax v2.7.7 for robust compatibility with mdx_math -->
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({{
-            tex2jax: {{
-                inlineMath: [['$','$'], ['\\(','\\)']],
-                displayMath: [['$$','$$'], ['\\[','\\]']]
-            }}
-        }});
+    <!-- Configure MathJax v3 : maths agrandies + scripts imbriqués jamais minuscules -->
+    <script>
+        window.MathJax = {{
+            tex: {{
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }},
+            chtml: {{
+                scale: 1.25,                /* maths un peu plus grandes que le texte */
+                minScale: 0.85,             /* un script imbriqué ne descend jamais sous 85% : plus de minuscules illisibles */
+                matchFontHeight: false,
+                displayAlign: 'center',
+                linebreaks: {{ automatic: true }}
+            }},
+            options: {{ menuOptions: {{ settings: {{ inTabOrder: false }} }} }}
+        }};
     </script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <!-- Use Google Fonts for better aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -482,6 +505,24 @@ html_page = f"""<!DOCTYPE html>
             border: 1px solid #cccccc;
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
+        }}
+        /* Anti-débordement : aucune équation ne sort de la page vers la droite */
+        body {{
+            overflow-x: hidden;
+        }}
+        .content {{
+            max-width: 100%;
+        }}
+        /* Les blocs d'équations hors texte restent dans la largeur ;
+           filet de sécurité si une ligne reste trop longue malgré le découpage en aligned */
+        mjx-container[display="true"] {{
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }}
+        /* Les maths en ligne peuvent revenir à la ligne au lieu de pousser la page */
+        mjx-container:not([display="true"]) {{
+            white-space: normal;
         }}
     </style>
 </head>
