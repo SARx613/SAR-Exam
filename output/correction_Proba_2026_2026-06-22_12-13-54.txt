@@ -1,0 +1,218 @@
+
+# Exercice 1
+
+## Question 1
+
+On étudie la convergence de $\sum_{n\geq 1} i^n n^{-\alpha}$.
+
+Puisque $i^n$ est une suite périodique de module 1, on applique le **critère d'Abel** : la série $\sum i^n n^{-\alpha}$ converge si et seulement si $n^{-\alpha} \to 0$ de manière monotone, i.e. si $\alpha > 0$.
+
+Vérifions qu'Abel s'applique : les sommes partielles $\sum_{n=1}^N i^n$ sont bornées (elles valent $i\frac{1-i^N}{1-i}$, donc bornées en module), et $n^{-\alpha}$ est décroissante et tend vers 0 si et seulement si $\alpha > 0$.
+
+**La série converge si et seulement si $\alpha > 0$.**
+
+## Question 2
+
+Par la **transformation d'Abel**, en posant $A_N = \sum_{n=1}^N i^n$, on a $|A_N| \leq \frac{|i||1-i^N|}{|1-i|} \leq \frac{2}{|1-i|} = \sqrt{2}$, donc les sommes partielles sont bornées par $M = \sqrt{2}$.
+
+La transformation d'Abel appliquée à la queue de série donne :
+
+$$\left|\sum_{n=N}^{+\infty} i^n n^{-\alpha}\right| \leq 2M \cdot N^{-\alpha} = 2\sqrt{2}\, N^{-\alpha}.$$
+
+Plus précisément, la majoration classique issue d'Abel donne :
+
+$$\left|\sum_{n=N}^{+\infty} i^n n^{-\alpha}\right| \leq \frac{2\sqrt{2}}{N^{\alpha}}.$$
+
+## Question 3
+
+La série entière $\sum_{n\geq 1} i^n n^{-\alpha} z^n$ a pour rayon de convergence
+
+$$R = \frac{1}{\limsup_{n\to\infty} |i^n n^{-\alpha}|^{1/n}} = \frac{1}{\limsup_{n\to\infty} n^{-\alpha/n}} = \frac{1}{1} = 1.$$
+
+**$R = 1$.**
+
+## Question 4
+
+Sur $\{|z| \leq 1\}$, il s'agit de la convergence uniforme. Sur $|z| < 1$, la convergence absolue est assurée. Le problème est sur le bord $|z|=1$.
+
+Pour $|z| \leq 1$, on écrit $z = e^{i\theta}$ sur le bord ; le terme général est $i^n n^{-\alpha} z^n = n^{-\alpha} e^{in(\theta + \pi/2)}$. La convergence uniforme sur $|z| \leq 1$ requiert la convergence normale, or $\sum n^{-\alpha}$ converge si et seulement si $\alpha > 1$.
+
+On peut invoquer le **théorème d'Abel uniforme** : si la série converge en tout point de $|z|=1$, et que les coefficients sont à variation décroissante tendant vers 0, alors la série converge uniformément sur $|z|\leq 1$. Mais pour la convergence **en tout point** du bord, notamment en $z=1$ où la série devient $\sum n^{-\alpha}$, il faut $\alpha > 1$.
+
+**La série converge uniformément sur $\{|z|\leq 1\}$ si et seulement si $\alpha > 1$.**
+
+## Question 5
+
+Pour $|z| < 1$, on cherche $S_\alpha(z) = \sum_{n=1}^{+\infty} i^n n^{-\alpha} z^n = \sum_{n=1}^{+\infty} \frac{(iz)^n}{n^\alpha}$.
+
+**Cas $\alpha = 0$ :** $S_0(z) = \sum_{n=1}^{+\infty} (iz)^n = \frac{iz}{1-iz}.$
+
+**Cas $\alpha = 1$ :** $S_1(z) = \sum_{n=1}^{+\infty} \frac{(iz)^n}{n} = -\ln(1-iz)$ (logarithme principal, valable pour $|iz|<1$, i.e. $|z|<1$).
+
+**Cas $\alpha = -1$ :** $S_{-1}(z) = \sum_{n=1}^{+\infty} n(iz)^n = iz \frac{d}{diz}\sum_{n=1}^\infty (iz)^n = iz \frac{d}{dw}\frac{w}{1-w}\bigg|_{w=iz} = iz \cdot \frac{1}{(1-iz)^2}= \frac{iz}{(1-iz)^2}.$
+
+---
+
+# Exercice 2
+
+## Question 1
+
+Le développement $\ln(1-t) = -t + o(t)$ lorsque $t\to 0$ provient du développement de Taylor de $\ln$ en 0.
+
+Pour $0 < x \leq \frac{1}{n}$ (avec $n\geq 1$ ; pour $n=0$, $f_0(x) = 1^{1/x} \to 1 = e^0$), on a :
+
+$$\ln(f_n(x)) = \frac{1}{x}\ln(1-nx) = \frac{1}{x}\bigl(-nx + o(nx)\bigr) = -n + o(1) \xrightarrow[x\to 0^+]{} -n.$$
+
+Donc $f_n(x) \to e^{-n}$ quand $x\to 0^+$.
+
+## Question 2
+
+Pour $t\geq 0$, la fonction $g(t) = e^{-t} - (1-t)$ vérifie $g(0)=0$ et $g'(t) = -e^{-t}+1 \geq 0$, donc $g$ est croissante : $1-t \leq e^{-t}$.
+
+Pour $x>0$, $n\geq 0$ et $x\leq \frac{1}{n}$ (le cas $x>\frac{1}{n}$ donne $f_n(x)=0$) : on a $0 < 1-nx \leq 1$ et $\frac{1}{x}>0$, donc $f_n(x) = (1-nx)^{1/x} \geq 0$. De plus, en appliquant $1-t\leq e^{-t}$ avec $t=nx$ :
+
+$$(1-nx)^{1/x} \leq (e^{-nx})^{1/x} = e^{-n}.$$
+
+Donc $0 \leq f_n(x) \leq e^{-n}$ pour tout $x\in\mathbb{R}_+^*$, $n\geq 0$.
+
+## Question 3
+
+On a montré $\sup_{x\in\mathbb{R}_+^*} |f_n(x)| \leq e^{-n}$, et en posant $f_n(0)=e^{-n}$, cette borne vaut aussi en 0. Donc $\|f_n\|_\infty \leq e^{-n}$ sur $\mathbb{R}_+$.
+
+La série $\sum_{n=0}^{+\infty} e^{-n} = \frac{1}{1-e^{-1}} < +\infty$, donc $\sum f_n$ converge normalement sur $\mathbb{R}_+$.
+
+## Question 4
+
+La convergence normale implique la convergence uniforme sur $\mathbb{R}_+$, donc on peut intervertir limite et somme :
+
+$$\lim_{k\to\infty} \sum_{n=0}^{+\infty} f_n\!\left(\tfrac{1}{k}\right) = \sum_{n=0}^{+\infty} \lim_{k\to\infty} f_n\!\left(\tfrac{1}{k}\right) = \sum_{n=0}^{+\infty} f_n(0) = \sum_{n=0}^{+\infty} e^{-n} = \frac{1}{1-e^{-1}} = S(0).$$
+
+(L'interversion limite/somme est licite grâce à la convergence uniforme : $\lim_{k\to\infty} S(1/k) = S(0)$ par continuité de $S$, car chaque $f_n$ prolongée est continue en 0.)
+
+$$S(0) = \frac{1}{1-e^{-1}} = \frac{e}{e-1}.$$
+
+## Question 5
+
+On calcule $\sum_{n=0}^{+\infty} f_n\!\left(\frac{1}{k}\right)$. Pour $n \leq k-1$, $\frac{1}{k} \leq \frac{1}{n}$ (pour $n\geq 1$), donc $f_n(1/k) = \left(1-\frac{n}{k}\right)^k$. Pour $n\geq k$, $f_n(1/k)=0$. Pour $n=0$, $f_0(1/k)=1$.
+
+Donc :
+
+$$\sum_{n=0}^{+\infty} f_n\!\left(\frac{1}{k}\right) = 1 + \sum_{n=1}^{k-1}\left(1-\frac{n}{k}\right)^k = \sum_{n=0}^{k-1}\left(\frac{k-n}{k}\right)^k.$$
+
+En effectuant le changement d'indice $j = k-n$ (i.e. $n = k-j$, $j$ va de 1 à $k$) :
+
+$$\sum_{n=0}^{k-1}\left(\frac{k-n}{k}\right)^k = \sum_{j=1}^{k}\left(\frac{j}{k}\right)^k = \frac{1^k + 2^k + \cdots + k^k}{k^k}.$$
+
+Mais le terme $j=k$ vaut $1$, et d'après la question 4 :
+
+$$\lim_{k\to\infty} \frac{1^k + 2^k + \cdots + k^k}{k^k} = \frac{e}{e-1}.$$
+
+On veut $\lim_{k\to\infty}\frac{1^k+2^k+\cdots+(k-1)^k}{k^k}$. On a :
+
+$$\frac{1^k+2^k+\cdots+(k-1)^k}{k^k} = \frac{1^k+2^k+\cdots+k^k}{k^k} - 1.$$
+
+Donc :
+
+$$\lim_{k\to\infty}\frac{1^k+2^k+\cdots+(k-1)^k}{k^k} = \frac{e}{e-1} - 1 = \frac{e-(e-1)}{e-1} = \boxed{\frac{1}{e-1}}.$$
+
+---
+
+# Exercice 3
+
+## Question 1
+
+$f$ est impaire, $2\pi$-périodique, vaut $1$ sur $(0,\pi)$, $0$ en $0$ et $\pi$, $-1$ sur $(-\pi,0)$.
+
+Sur $[-2\pi,2\pi]$ : créneaux de hauteur $+1$ sur $(-2\pi,-\pi)$, $0$ aux multiples de $\pi$... Non : $f$ est impaire donc vaut $-1$ sur $(-\pi,0)$, $+1$ sur $(0,\pi)$, $-1$ sur $(\pi,2\pi)$ (par $2\pi$-périodicité : $f(\pi+x)=f(-\pi+x)=f(x-\pi)$, et pour $x\in(0,\pi)$, $x-\pi\in(-\pi,0)$ donc $f(x-\pi)=-1$), $+1$ sur $(-2\pi,-\pi)$.
+
+La représentation est un signal créneau : rectangles alternés de hauteur $\pm 1$, nuls aux entiers multiples de $\pi$.
+
+## Question 2
+
+Comme $f$ est impaire, $a_n = 0$ pour tout $n\geq 0$.
+
+$$b_n = \frac{1}{\pi}\int_{-\pi}^{\pi} f(x)\sin(nx)\,dx = \frac{2}{\pi}\int_0^{\pi}\sin(nx)\,dx.$$
+
+Pour $n=0$ : $b_0=0$. Pour $n\geq 1$ :
+
+$$b_n = \frac{2}{\pi}\left[-\frac{\cos(nx)}{n}\right]_0^{\pi} = \frac{2}{\pi n}(1-\cos(n\pi)) = \frac{2(1-(-1)^n)}{\pi n}.$$
+
+Donc $b_n = \frac{4}{\pi n}$ si $n$ est impair, $b_n = 0$ si $n$ est pair.
+
+**$a_n = 0$ pour tout $n$, $b_n = 0$ si $n$ pair, $b_n = \frac{4}{\pi n}$ si $n$ impair.**
+
+## Question 3
+
+$f$ est $2\pi$-périodique, de classe $C^1$ par morceaux. En tout point $x$, la série de Fourier converge vers $\frac{f(x^+)+f(x^-)}{2}$.
+
+- En $x=0,\pi$ (et multiples de $\pi$) : $\frac{f(0^+)+f(0^-)}{2} = \frac{1+(-1)}{2}=0 = f(0)$. ✓
+- En $x\in(0,\pi)$ : $f$ est continue et vaut $1$, la série converge vers $1=f(x)$. ✓
+- Par imparité et périodicité, la convergence vers $f(x)$ est vérifiée partout.
+
+Donc pour tout $x\in\mathbb{R}$ :
+
+$$f(x) = \sum_{n=0}^{+\infty}\frac{4}{\pi(2n+1)}\sin((2n+1)x).$$
+
+**Convergence uniforme :** Le terme général est $\frac{4}{\pi(2n+1)}$, indépendant de $x$, et $\sum \frac{1}{2n+1}$ diverge. De plus, en $x=\pi/2$, la série vaut $\sum \frac{4}{\pi(2n+1)}(-1)^n$ qui converge (Leibniz), mais la convergence n'est pas uniforme sur $\mathbb{R}$ car $f$ est discontinue (le phénomène de Gibbs empêche la convergence uniforme, et plus formellement : la somme partielle d'une série de fonctions continues convergeant uniformément serait continue, or $f$ ne l'est pas). **La série ne converge pas uniformément sur $\mathbb{R}$.**
+
+## Question 4
+
+On applique la formule en $x = \frac{\pi}{2}$ : $f(\pi/2)=1$ et $\sin((2n+1)\frac{\pi}{2}) = (-1)^n$, donc :
+
+$$1 = \sum_{n=0}^{+\infty}\frac{4}{\pi(2n+1)}(-1)^n \implies \sum_{n=0}^{+\infty}\frac{(-1)^n}{2n+1} = \frac{\pi}{4}.$$
+
+## Question 5
+
+Sur $[\varepsilon, \pi-\varepsilon]$, $f$ est continue (elle vaut $1$ identiquement) et de classe $C^1$. Les extrema locaux de $f$ sur cet intervalle sont atteints aux bords, qui s'éloignent des discontinuités. On invoque le **théorème de Dirichlet uniforme sur un compact éloigné des discontinuités** : si $f$ est $C^1$ par morceaux et que $[\varepsilon,\pi-\varepsilon]$ ne contient aucune discontinuité (ce qui est le cas pour $\varepsilon\in]0,\pi/2[$, car les discontinuités sont en $0$ et $\pi$), alors la série de Fourier converge uniformément sur $[\varepsilon,\pi-\varepsilon]$.
+
+Plus précisément, le cours établit que sur tout intervalle compact ne contenant pas de discontinuité de $f$, la convergence est uniforme (ce résultat est démontré en cours via l'estimation des noyaux de Dirichlet ou par le critère de Dirichlet uniforme).
+
+## Question 6
+
+La série $\sum_{n=0}^{+\infty}\frac{4}{\pi(2n+1)}\sin((2n+1)x)$ converge uniformément sur $[\varepsilon,\pi-\varepsilon]$ (Q5), et chaque terme est $C^1$. Les dérivées terme à terme sont $\frac{4}{\pi(2n+1)}\cdot(2n+1)\cos((2n+1)x) = \frac{4}{\pi}\cos((2n+1)x)$.
+
+Or $\left|\frac{4}{\pi}\cos((2n+1)x)\right|\leq\frac{4}{\pi}$ et $\sum \frac{4}{\pi}$ diverge : la série des dérivées n'est pas normalement convergente en général. Il faut un argument plus fin.
+
+On procède différemment : on considère la série $\sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)$.
+
+**Convergence uniforme sur $[\varepsilon,\pi-\varepsilon]$ :** On a $\left|\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)\right|\leq \frac{4}{\pi(2n+1)^2}$ et $\sum \frac{1}{(2n+1)^2}<+\infty$, donc la série converge **normalement** (et en particulier uniformément) sur $[\varepsilon,\pi-\varepsilon]$.
+
+**Identification de la somme :** On applique le **théorème de dérivation des séries de fonctions** : la série $\sum \frac{4}{\pi(2n+1)}\sin((2n+1)x)$ converge uniformément sur $[\varepsilon,\pi-\varepsilon]$ vers $f(x)=1$, et la série dérivée terme à terme $\sum \frac{4}{\pi}\cos((2n+1)x)$... Hmm, la série dérivée ne converge pas normalement.
+
+On procède dans l'autre sens : posons $g(x) = \sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)$, qui converge normalement sur $\mathbb{R}$. Chaque terme est $C^1$ et sa dérivée est $\frac{4}{\pi(2n+1)}\sin((2n+1)x)$. La série des dérivées converge uniformément sur $[\varepsilon,\pi-\varepsilon]$ vers $f(x)=1$ (Q5). Donc par le théorème de dérivation :
+
+$$g'(x) = \sum_{n=0}^\infty \frac{4}{\pi(2n+1)}\sin((2n+1)x) = f(x) = 1 \quad \text{sur } [\varepsilon,\pi-\varepsilon].$$
+
+Ainsi $g(x) = x + C$ sur $[\varepsilon,\pi-\varepsilon]$ pour une constante $C$. En $x=\frac{\pi}{2}$ :
+
+$$g\!\left(\tfrac{\pi}{2}\right) = \sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos\!\left((2n+1)\tfrac{\pi}{2}\right) = 0$$
+
+car $\cos((2n+1)\pi/2)=0$ pour tout $n$. Donc $C = -\frac{\pi}{2}$, d'où :
+
+$$\sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x) = x - \frac{\pi}{2} \quad \text{sur } [\varepsilon,\pi-\varepsilon].$$
+
+## Question 7
+
+La série $\sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)$ vérifie :
+
+$$\sup_{x\in[0,\pi]}\left|\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)\right| \leq \frac{4}{\pi(2n+1)^2},$$
+
+et $\sum_{n=0}^\infty \frac{4}{\pi(2n+1)^2} < +\infty$ (série de Riemann, $p=2>1$). Donc la série converge **normalement sur $[0,\pi]$**, donc uniformément.
+
+La somme $g(x) = x-\frac{\pi}{2}$ a été établie sur $[\varepsilon,\pi-\varepsilon]$ pour tout $\varepsilon\in]0,\pi/2[$, donc sur $\bigcup_{\varepsilon>0}[\varepsilon,\pi-\varepsilon] = (0,\pi)$. Par convergence uniforme sur $[0,\pi]$ et continuité de $x\mapsto x-\frac{\pi}{2}$, on étend l'égalité à $[0,\pi]$ par passage à la limite :
+
+$$\sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x) = x - \frac{\pi}{2} \quad \text{sur } [0,\pi].$$
+
+## Question 8
+
+**Calcul de $\sum_{n=0}^\infty \frac{1}{(2n+1)^2}$ :** On évalue en $x=0$ :
+
+$$\sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2}\cos(0) = 0 - \frac{\pi}{2} \implies \sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2} = -\frac{\pi}{2} \implies \sum_{n=0}^{+\infty}\frac{1}{(2n+1)^2} = \frac{\pi^2}{8}.$$
+
+**Calcul de $\sum_{n=1}^\infty \frac{1}{n^2}$ :** On décompose selon la parité :
+
+$$\sum_{n=1}^{\infty}\frac{1}{n^2} = \sum_{n=0}^{\infty}\frac{1}{(2n+1)^2} + \sum_{n=1}^{\infty}\frac{1}{(2n)^2} = \frac{\pi^2}{8} + \frac{1}{4}\sum_{n=1}^{\infty}\frac{1}{n^2}.$$
+
+Donc $\frac{3}{4}\sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{8}$, d'où :
+
+$$\sum_{n=1}^{+\infty}\frac{1}{n^2} = \frac{\pi^2}{6}.$$
