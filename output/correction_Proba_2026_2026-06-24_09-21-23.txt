@@ -1,0 +1,281 @@
+
+# Correction — Analyse II, Examen 24/06/2025
+
+---
+
+## Exercice 1 — Théorème de changement de variable en dimension 2
+
+**Théorème.** Soient $U, V$ deux ouverts de $\mathbb{R}^2$, $\varphi : U \to V$ un $C^1$-difféomorphisme, et $f : V \to \mathbb{R}$ une fonction mesurable positive ou intégrable. Alors :
+
+$$\int_V f(x,y)\, dx\, dy = \int_U f(\varphi(u,v))\, |\det J_\varphi(u,v)|\, du\, dv$$
+
+où $J_\varphi$ désigne la matrice jacobienne de $\varphi$.
+
+**Cas polaire.** On pose $\varphi(r,\theta) = (r\cos\theta, r\sin\theta)$, défini sur $U = (0,+\infty)\times(0,2\pi)$ (ou tout intervalle de longueur $2\pi$ pour $\theta$). Le jacobien vaut :
+
+$$\det J_\varphi = \begin{vmatrix} \cos\theta & -r\sin\theta \\ \sin\theta & r\cos\theta \end{vmatrix} = r$$
+
+Donc pour $f$ intégrable sur $V \subset \mathbb{R}^2$ :
+
+$$\iint_V f(x,y)\, dx\, dy = \iint_{\varphi^{-1}(V)} f(r\cos\theta, r\sin\theta)\, r\, dr\, d\theta$$
+
+---
+
+## Exercice 2
+
+On pose $f(x) = e^{-x}\mathbf{1}_{x>0}$ et $g(x) = \mathbf{1}_{[0,1]}(x)$.
+
+### Question 1
+
+$f \in L^1(\mathbb{R})$ car $\int_0^{+\infty} e^{-x}dx = 1 < \infty$, et $f \in L^\infty(\mathbb{R})$ car $f \leq 1$. De même $g \in L^1(\mathbb{R}) \cap L^\infty(\mathbb{R})$. Par la propriété de convolution : $f, g \in L^1 \Rightarrow f*g \in L^1(\mathbb{R})$, et $\|f*g\|_{L^\infty} \leq \|f\|_{L^1}\|g\|_{L^\infty} = 1 < \infty$, donc $f*g \in L^1 \cap L^\infty(\mathbb{R})$.
+
+### Question 2
+
+Par définition, $f*g(x) = \int_{\mathbb{R}} f(x-t)g(t)\,dt = \int_0^1 e^{-(x-t)}\mathbf{1}_{x-t>0}\,dt = \int_0^1 e^{-(x-t)}\mathbf{1}_{t<x}\,dt$.
+
+**Cas $x < 0$ :** La condition $t < x < 0$ avec $t \in [0,1]$ est impossible. Donc $f*g(x) = 0$.
+
+**Cas $0 \leq x \leq 1$ :** $t \in [0,\min(x,1)] = [0,x]$, donc :
+
+$$f*g(x) = \int_0^x e^{-(x-t)}\,dt = e^{-x}\int_0^x e^t\,dt = e^{-x}(e^x - 1) = 1 - e^{-x}$$
+
+**Cas $x > 1$ :** $t \in [0,1]$ (entièrement contenu dans $(-\infty, x)$), donc :
+
+$$f*g(x) = \int_0^1 e^{-(x-t)}\,dt = e^{-x}\int_0^1 e^t\,dt = e^{-x}(e-1)$$
+
+### Question 3
+
+- Pour $x < 0$ : $f*g(x) = 0$.
+- Sur $[0,1]$ : $1 - e^{-x}$ croît de $0$ à $1 - e^{-1}$.
+- Pour $x > 1$ : $e^{-x}(e-1)$ décroît vers $0$, avec valeur en $x=1$ : $e^{-1}(e-1) = 1 - e^{-1}$.
+
+Le graphe est nul sur $(-\infty, 0)$, croît continûment de $0$ à $1-e^{-1}$ sur $[0,1]$, puis décroît vers $0$ pour $x > 1$.
+
+**Continuité :** En $x = 0$ : $\lim_{x\to 0^+}(1-e^{-x}) = 0 = f*g(0^-)$. ✓  
+En $x = 1$ : $\lim_{x\to 1^-}(1-e^{-1}) = 1 - e^{-1} = e^{-1}(e-1)$. ✓  
+Donc $f*g$ est **continue** sur $\mathbb{R}$.
+
+### Question 4
+
+Notons $h = f*g$. On majore $|h(x)| \leq \min(1, e^{-x}(e-1))$. On veut montrer que $(1+x^2)h \in L^1(\mathbb{R})$.
+
+- Sur $(-\infty, 0)$ : $(1+x^2)h(x) = 0$, pas de problème.
+- Sur $[0,1]$ : $(1+x^2)(1-e^{-x}) \leq 2 \cdot 1$, intégrable sur $[0,1]$.
+- Sur $(1,+\infty)$ : $(1+x^2)e^{-x}(e-1) \leq C(1+x^2)e^{-x}$, qui est intégrable sur $(1,+\infty)$ car $e^{-x}$ décroît plus vite que tout polynôme.
+
+Donc $(x \mapsto (1+x^2)h(x)) \in L^1(\mathbb{R})$.
+
+Par le théorème de régularité de la transformée de Fourier : si $(1+|\xi|^2)\hat{h} \in L^1$... En fait on utilise le critère direct : $h \in L^1(\mathbb{R})$ et $(1+x^2)h(x) \in L^1(\mathbb{R})$ implique que $\hat{h} \in C^2(\mathbb{R})$, ce qui équivaut à dire que $\widehat{f*g} \in C^2$... 
+
+Plus précisément : puisque $x \mapsto x^k h(x) \in L^1(\mathbb{R})$ pour $k = 0, 1, 2$ (car $(1+x^2)h(x) \in L^1$), le théorème de dérivation sous le signe intégrale pour la transformée de Fourier donne que $\xi \mapsto \widehat{h}(\xi)$ est $C^2$. Donc $\widehat{f*g}$ est de classe $C^2(\mathbb{R})$.
+
+### Question 5
+
+**Calcul de $\hat{f}(\xi)$ :**
+
+$$\hat{f}(\xi) = \int_0^{+\infty} e^{-x}e^{-i\xi x}\,dx = \int_0^{+\infty} e^{-(1+i\xi)x}\,dx = \frac{1}{1+i\xi}$$
+
+**Calcul de $\hat{g}(\xi)$ :** Pour $\xi \neq 0$ :
+
+$$\hat{g}(\xi) = \int_0^1 e^{-i\xi t}\,dt = \left[\frac{e^{-i\xi t}}{-i\xi}\right]_0^1 = \frac{1 - e^{-i\xi}}{i\xi}$$
+
+On factorise : $1 - e^{-i\xi} = e^{-i\xi/2}(e^{i\xi/2} - e^{-i\xi/2}) = 2i\sin(\xi/2)e^{-i\xi/2}$, donc :
+
+$$\hat{g}(\xi) = \frac{2i\sin(\xi/2)e^{-i\xi/2}}{i\xi} = \frac{2\sin(\xi/2)}{\xi}e^{-i\xi/2}$$
+
+**Calcul de $\widehat{f*g}(\xi)$ :**
+
+$$\widehat{f*g}(\xi) = \hat{f}(\xi)\cdot\hat{g}(\xi) = \frac{1}{1+i\xi}\cdot\frac{2\sin(\xi/2)}{\xi}e^{-i\xi/2}$$
+
+On rationalise $\dfrac{1}{1+i\xi} = \dfrac{1-i\xi}{1+\xi^2}$, d'où :
+
+$$\boxed{\widehat{f*g}(\xi) = \frac{2(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}e^{-i\xi/2}}$$
+
+### Question 6
+
+On applique la formule d'inversion de Fourier. On a montré que $\widehat{f*g} \in L^1(\mathbb{R})$ (car $\widehat{f*g}(\xi) = \hat{f}(\xi)\hat{g}(\xi)$ avec $\hat{f} \in L^2$ et $\hat{g} \in L^2$, mais plus directement : $|\widehat{f*g}(\xi)| \leq C(1+|\xi|)^{-2}$ pour $|\xi|$ grand, ce qui donne $\widehat{f*g} \in L^1$). De plus $f*g \in L^1$ et est continue. Donc la formule d'inversion s'applique :
+
+$$f*g(x) = \frac{1}{2\pi}\int_{\mathbb{R}} \widehat{f*g}(\xi)\,e^{i\xi x}\,d\xi$$
+
+On choisit $x = 0$ : $f*g(0) = 0$ et $e^{i\xi \cdot 0} = 1$, donc :
+
+$$0 = \frac{1}{2\pi}\int_{\mathbb{R}} \frac{2(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}e^{-i\xi/2}\,d\xi$$
+
+On choisit plutôt $x = \frac{1}{2}$ (point symétrique) : $f*g(1/2) = 1 - e^{-1/2}$ et $e^{i\xi/2}$ :
+
+$$1 - e^{-1/2} = \frac{1}{2\pi}\int_{\mathbb{R}} \frac{2(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}\,d\xi$$
+
+Séparons partie réelle et imaginaire. La partie imaginaire de $\dfrac{(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}$ est $\dfrac{-\xi \sin(\xi/2)}{\xi(1+\xi^2)} = \dfrac{-\sin(\xi/2)}{1+\xi^2}$, qui est une fonction impaire, donc son intégrale sur $\mathbb{R}$ est nulle. La partie réelle est $\dfrac{\sin(\xi/2)}{\xi(1+\xi^2)}$, qui est paire. Donc :
+
+$$1 - e^{-1/2} = \frac{1}{2\pi}\cdot 2 \int_{\mathbb{R}} \frac{\sin(\xi/2)}{\xi(1+\xi^2)}\,d\xi$$
+
+D'où :
+
+$$\boxed{I = \int_{\mathbb{R}} \frac{\sin(\xi/2)}{\xi(1+\xi^2)}\,d\xi = \pi(1 - e^{-1/2})}$$
+
+---
+
+## Exercice 3
+
+### Question 1
+
+Pour $t > 0$ et $x \in \mathbb{R}$, on a $|\cos(xt)| \leq 1$, et par l'inégalité des accroissements finis (ou le développement $e^{-2t} - e^{-3t} = te^{-ct}$ pour un $c \in (2,3)$) :
+
+$$\left|\frac{e^{-2t}-e^{-3t}}{t}\right| \leq \frac{e^{-2t}+e^{-3t}}{t}$$
+
+En $t \to 0^+$ : $\dfrac{e^{-2t}-e^{-3t}}{t} \to -2 - (-3) = 1$ (limite finie), donc l'intégrande est bornée au voisinage de $0$.
+
+En $+\infty$ : $\left|\dfrac{e^{-2t}-e^{-3t}}{t}\cos(xt)\right| \leq e^{-2t}$, intégrable.
+
+Donc l'intégrale est absolument convergente pour tout $x \in \mathbb{R}$.
+
+### Question 2
+
+On pose $\varphi(x,t) = \dfrac{e^{-2t}-e^{-3t}}{t}\cos(xt)$. On a $\partial_x \varphi = -\dfrac{e^{-2t}-e^{-3t}}{t}\cdot t \sin(xt) = -(e^{-2t}-e^{-3t})\sin(xt)$.
+
+Le majorant $|(e^{-2t}-e^{-3t})\sin(xt)| \leq e^{-2t}+e^{-3t}$ est intégrable sur $(0,+\infty)$, uniformément en $x$. Par le théorème de dérivation sous le signe intégrale, $F \in C^1(\mathbb{R})$ et :
+
+$$F'(x) = -\int_0^{+\infty}(e^{-2t}-e^{-3t})\sin(xt)\,dt$$
+
+En utilisant l'indication $\sin(xt) = \mathrm{Im}(e^{ixt})$ :
+
+$$\int_0^{+\infty} e^{-at}\sin(xt)\,dt = \mathrm{Im}\int_0^{+\infty}e^{-(a-ix)t}\,dt = \mathrm{Im}\frac{1}{a-ix} = \mathrm{Im}\frac{a+ix}{a^2+x^2} = \frac{x}{a^2+x^2}$$
+
+pour $a > 0$. Donc :
+
+$$F'(x) = -\left(\frac{x}{4+x^2} - \frac{x}{9+x^2}\right) = \frac{-x}{4+x^2} + \frac{x}{9+x^2}$$
+
+### Question 3
+
+On intègre $F'(x)$ :
+
+$$F(x) = -\frac{1}{2}\ln(4+x^2) + \frac{1}{2}\ln(9+x^2) + C = \frac{1}{2}\ln\!\left(\frac{9+x^2}{4+x^2}\right) + C$$
+
+### Question 4
+
+Par le lemme de Riemann-Lebesgue, pour $t > 0$ fixé, $\cos(xt) \to 0$ quand $x \to \pm\infty$. Plus précisément, en appliquant le lemme de Riemann-Lebesgue à $h(t) = \dfrac{e^{-2t}-e^{-3t}}{t}\mathbf{1}_{(0,+\infty)}(t) \in L^1(\mathbb{R})$ (vérifié à la question 1) :
+
+$$F(x) = \int_0^{+\infty} h(t)\cos(xt)\,dt \xrightarrow[|x|\to+\infty]{} 0$$
+
+Donc $\displaystyle\lim_{|x|\to+\infty} F(x) = 0$.
+
+On en déduit $C$ : $\dfrac{1}{2}\ln\!\left(\dfrac{9+x^2}{4+x^2}\right) \to \dfrac{1}{2}\ln(1) = 0$ quand $x \to \infty$. Donc $C = 0$ et :
+
+$$\boxed{F(x) = \frac{1}{2}\ln\!\left(\frac{9+x^2}{4+x^2}\right)}$$
+
+---
+
+## Exercice 4
+
+### Question 1 — Domaine $\Omega$
+
+$\Omega = \{(x,y) \in \mathbb{R}^2 : x \geq 0,\ y \geq 0,\ x^2+y^2 \geq 1,\ x+y \leq 2\}$.
+
+C'est la région du premier quadrant, à l'extérieur du disque unité, sous la droite $x+y=2$.
+
+*(Domaine hachuré sur le dessin : premier quadrant, entre le quart de cercle de rayon 1 et le segment de droite $x+y=2$.)*
+
+### Question 2 — Décomposition du bord
+
+Le bord $\partial\Omega$ se décompose en trois arcs (orientés dans le sens direct, i.e. le domaine est à gauche) :
+
+- $\Gamma_1$ : arc de cercle $x^2+y^2 = 1$, $x \geq 0$, $y \geq 0$ (quart de cercle unité dans le premier quadrant).
+- $\Gamma_2$ : segment sur l'axe $y = 0$, de $(2,0)$ à $(1,0)$, i.e. $\{(x,0) : 1 \leq x \leq 2\}$.
+- $\Gamma_3$ : segment $x + y = 2$, $x \geq 0$, $y \geq 0$, i.e. $\{(x, 2-x) : 0 \leq x \leq 2\}$.
+- $\Gamma_4$ : segment sur l'axe $x = 0$, de $(0,2)$ à $(0,1)$, i.e. $\{(0,y) : 1 \leq y \leq 2\}$.
+
+Soit $n = 4$.
+
+**Sens direct (domaine à gauche) :**
+- $\Gamma_1$ : du point $(1,0)$ vers $(0,1)$ (sens trigonométrique).
+- $\Gamma_2$ : de $(2,0)$ vers $(1,0)$.
+- $\Gamma_3$ : de $(0,2)$ vers $(2,0)$.
+- $\Gamma_4$ : de $(0,1)$ vers $(0,2)$.
+
+*(Correction : le bord parcouru dans le sens direct — domaine à gauche — suit l'ordre $\Gamma_2 \to \Gamma_1$ inversé... Précisons soigneusement.)*
+
+Le bord orienté positivement (sens direct = domaine à gauche) est :
+
+$\Gamma_3$ de $(2,0)$ à $(0,2)$, puis $\Gamma_4$ de $(0,2)$ à $(0,1)$, puis $\Gamma_1$ de $(0,1)$ à $(1,0)$ (sens trigonométrique sur le cercle), puis $\Gamma_2$ de $(1,0)$ à $(2,0)$.
+
+### Question 3 — Paramétrage
+
+- $\gamma_3(t) = (t, 2-t)$, $t$ de $0$ à $2$ (le long de $x+y=2$, de $(0,2)$ à... attendez, sens direct).
+
+Reprenons avec l'orientation directe (intérieur à gauche) :
+
+- $\gamma_2(t) = (t, 0)$, $t \in [1, 2]$, parcouru de $t=1$ à $t=2$ (**de $(1,0)$ à $(2,0)$**). — *axe $y=0$, vers la droite : intérieur du domaine est au-dessus, donc à gauche. ✓*
+- $\gamma_3(t) = (2-t, t)$, $t \in [0,2]$, de $(2,0)$ à $(0,2)$ — *(le long de $x+y=2$ : intérieur est en bas-gauche, donc à gauche quand on marche vers $(0,2)$. ✓)*
+- $\gamma_4(t) = (0, 2-t)$, $t \in [0,1]$, de $(0,2)$ à $(0,1)$ — *(axe $x=0$, vers le bas : intérieur à droite... ✗)*
+
+Raisonnons globalement : $\Omega$ est borné, convexe, dans le premier quadrant. La frontière orientée positivement (sens trigonométrique global autour de $\Omega$) est :
+
+- $\gamma_2(t) = (t, 0)$, $t \in [1, 2]$ : de $(1,0)$ à $(2,0)$.
+- $\gamma_3(t) = (2-t, t)$, $t \in [0, 2]$ : de $(2,0)$ à $(0,2)$.
+- $\gamma_4(t) = (0, 2-t)$, $t \in [0, 1]$ : de $(0,2)$ à $(0,1)$.
+- $\gamma_1(t) = (\cos t, \sin t)$, $t \in [0, \pi/2]$, parcouru **de $\pi/2$ à $0$**, i.e. $\gamma_1(t) = (\sin t, \cos t)$, $t \in [0, \pi/2]$ : de $(0,1)$ à $(1,0)$.
+
+En résumé :
+
+$$\gamma_1(t) = (\sin t, \cos t),\quad t \in [0, \pi/2]$$
+
+$$\gamma_2(t) = (t, 0),\quad t \in [1, 2]$$
+
+$$\gamma_3(t) = (2-t, t),\quad t \in [0, 2]$$
+
+$$\gamma_4(t) = (0, 2-t),\quad t \in [0, 1]$$
+
+Le bord orienté positivement est $\gamma_2$, puis $\gamma_3$, puis $\gamma_4$, puis $\gamma_1$.
+
+### Question 4 — Green-Riemann et aire
+
+**Théorème de Green-Riemann.** Si $\vec{v} = (P, Q)$ est un champ $C^1$ sur $\overline{\Omega}$, alors :
+
+$$\oint_{\partial\Omega} P\,dx + Q\,dy = \iint_\Omega \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right)\,dx\,dy$$
+
+Pour calculer l'aire, on choisit $\vec{v} = (P,Q) = (0, x)$ (ou $(-y,0)$ ou $(-y/2, x/2)$), ce qui donne $\dfrac{\partial Q}{\partial x} - \dfrac{\partial P}{\partial y} = 1$.
+
+Donc :
+
+$$\mathrm{Aire}(\Omega) = \oint_{\partial\Omega} x\,dy$$
+
+On calcule sur chaque arc :
+
+**Sur $\gamma_1$** : $x = \sin t$, $y = \cos t$, $dy = -\sin t\,dt$, $t \in [0, \pi/2]$ :
+
+$$\int_{\gamma_1} x\,dy = \int_0^{\pi/2} \sin t \cdot (-\sin t)\,dt = -\int_0^{\pi/2}\sin^2 t\,dt = -\frac{\pi}{4}$$
+
+**Sur $\gamma_2$** : $x = t$, $y = 0$, $dy = 0$, $t \in [1,2]$ :
+
+$$\int_{\gamma_2} x\,dy = 0$$
+
+**Sur $\gamma_3$** : $x = 2-t$, $y = t$, $dy = dt$, $t \in [0,2]$ :
+
+$$\int_{\gamma_3} x\,dy = \int_0^2 (2-t)\,dt = \left[2t - \frac{t^2}{2}\right]_0^2 = 4 - 2 = 2$$
+
+**Sur $\gamma_4$** : $x = 0$, $dy = -dt$, $t \in [0,1]$ :
+
+$$\int_{\gamma_4} x\,dy = 0$$
+
+Donc :
+
+$$\mathrm{Aire}(\Omega) = -\frac{\pi}{4} + 0 + 2 + 0 = 2 - \frac{\pi}{4}$$
+
+### Question 5 — Calcul géométrique de l'aire
+
+Le domaine $\Omega$ est contenu dans le carré $[0,2]\times[0,2]$ limité par $x+y \leq 2$, donc dans le triangle $T$ de sommets $(0,0)$, $(2,0)$, $(0,2)$, d'aire $\dfrac{1}{2}\cdot 2 \cdot 2 = 2$.
+
+On retire de $T$ :
+- Le quart de disque unité $D$ dans le premier quadrant, d'aire $\dfrac{\pi}{4}$.
+- Les deux triangles rectangles sur les axes entre $0$ et $1$ sont déjà exclus par $x^2+y^2 \geq 1$... 
+
+Plus précisément : $T = \{x \geq 0, y \geq 0, x+y \leq 2\}$, aire $= 2$.  
+$\Omega = T \setminus \{x^2+y^2 \leq 1, x\geq 0, y\geq 0\}$.
+
+Le quart de disque unité dans le premier quadrant est entièrement contenu dans $T$ (car pour $x^2+y^2 \leq 1$, $x,y\geq 0$, on a $x+y \leq \sqrt{2}(x^2+y^2)^{1/2}\cdot \sqrt{2} \leq 2$... en fait $x+y \leq \sqrt{2} < 2$ par Cauchy-Schwarz).
+
+Donc :
+
+$$\mathrm{Aire}(\Omega) = \mathrm{Aire}(T) - \mathrm{Aire}(\text{quart de disque unité}) = 2 - \frac{\pi}{4}$$
+
+Ce qui confirme le résultat obtenu par Green-Riemann.

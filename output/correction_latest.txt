@@ -1,218 +1,281 @@
 
-# Exercice 1
-
-## Question 1
-
-On étudie la convergence de $\sum_{n\geq 1} i^n n^{-\alpha}$.
-
-Puisque $i^n$ est une suite périodique de module 1, on applique le **critère d'Abel** : la série $\sum i^n n^{-\alpha}$ converge si et seulement si $n^{-\alpha} \to 0$ de manière monotone, i.e. si $\alpha > 0$.
-
-Vérifions qu'Abel s'applique : les sommes partielles $\sum_{n=1}^N i^n$ sont bornées (elles valent $i\frac{1-i^N}{1-i}$, donc bornées en module), et $n^{-\alpha}$ est décroissante et tend vers 0 si et seulement si $\alpha > 0$.
-
-**La série converge si et seulement si $\alpha > 0$.**
-
-## Question 2
-
-Par la **transformation d'Abel**, en posant $A_N = \sum_{n=1}^N i^n$, on a $|A_N| \leq \frac{|i||1-i^N|}{|1-i|} \leq \frac{2}{|1-i|} = \sqrt{2}$, donc les sommes partielles sont bornées par $M = \sqrt{2}$.
-
-La transformation d'Abel appliquée à la queue de série donne :
-
-$$\left|\sum_{n=N}^{+\infty} i^n n^{-\alpha}\right| \leq 2M \cdot N^{-\alpha} = 2\sqrt{2}\, N^{-\alpha}.$$
-
-Plus précisément, la majoration classique issue d'Abel donne :
-
-$$\left|\sum_{n=N}^{+\infty} i^n n^{-\alpha}\right| \leq \frac{2\sqrt{2}}{N^{\alpha}}.$$
-
-## Question 3
-
-La série entière $\sum_{n\geq 1} i^n n^{-\alpha} z^n$ a pour rayon de convergence
-
-$$R = \frac{1}{\limsup_{n\to\infty} |i^n n^{-\alpha}|^{1/n}} = \frac{1}{\limsup_{n\to\infty} n^{-\alpha/n}} = \frac{1}{1} = 1.$$
-
-**$R = 1$.**
-
-## Question 4
-
-Sur $\{|z| \leq 1\}$, il s'agit de la convergence uniforme. Sur $|z| < 1$, la convergence absolue est assurée. Le problème est sur le bord $|z|=1$.
-
-Pour $|z| \leq 1$, on écrit $z = e^{i\theta}$ sur le bord ; le terme général est $i^n n^{-\alpha} z^n = n^{-\alpha} e^{in(\theta + \pi/2)}$. La convergence uniforme sur $|z| \leq 1$ requiert la convergence normale, or $\sum n^{-\alpha}$ converge si et seulement si $\alpha > 1$.
-
-On peut invoquer le **théorème d'Abel uniforme** : si la série converge en tout point de $|z|=1$, et que les coefficients sont à variation décroissante tendant vers 0, alors la série converge uniformément sur $|z|\leq 1$. Mais pour la convergence **en tout point** du bord, notamment en $z=1$ où la série devient $\sum n^{-\alpha}$, il faut $\alpha > 1$.
-
-**La série converge uniformément sur $\{|z|\leq 1\}$ si et seulement si $\alpha > 1$.**
-
-## Question 5
-
-Pour $|z| < 1$, on cherche $S_\alpha(z) = \sum_{n=1}^{+\infty} i^n n^{-\alpha} z^n = \sum_{n=1}^{+\infty} \frac{(iz)^n}{n^\alpha}$.
-
-**Cas $\alpha = 0$ :** $S_0(z) = \sum_{n=1}^{+\infty} (iz)^n = \frac{iz}{1-iz}.$
-
-**Cas $\alpha = 1$ :** $S_1(z) = \sum_{n=1}^{+\infty} \frac{(iz)^n}{n} = -\ln(1-iz)$ (logarithme principal, valable pour $|iz|<1$, i.e. $|z|<1$).
-
-**Cas $\alpha = -1$ :** $S_{-1}(z) = \sum_{n=1}^{+\infty} n(iz)^n = iz \frac{d}{diz}\sum_{n=1}^\infty (iz)^n = iz \frac{d}{dw}\frac{w}{1-w}\bigg|_{w=iz} = iz \cdot \frac{1}{(1-iz)^2}= \frac{iz}{(1-iz)^2}.$
+# Correction — Analyse II, Examen 24/06/2025
 
 ---
 
-# Exercice 2
+## Exercice 1 — Théorème de changement de variable en dimension 2
 
-## Question 1
+**Théorème.** Soient $U, V$ deux ouverts de $\mathbb{R}^2$, $\varphi : U \to V$ un $C^1$-difféomorphisme, et $f : V \to \mathbb{R}$ une fonction mesurable positive ou intégrable. Alors :
 
-Le développement $\ln(1-t) = -t + o(t)$ lorsque $t\to 0$ provient du développement de Taylor de $\ln$ en 0.
+$$\int_V f(x,y)\, dx\, dy = \int_U f(\varphi(u,v))\, |\det J_\varphi(u,v)|\, du\, dv$$
 
-Pour $0 < x \leq \frac{1}{n}$ (avec $n\geq 1$ ; pour $n=0$, $f_0(x) = 1^{1/x} \to 1 = e^0$), on a :
+où $J_\varphi$ désigne la matrice jacobienne de $\varphi$.
 
-$$\ln(f_n(x)) = \frac{1}{x}\ln(1-nx) = \frac{1}{x}\bigl(-nx + o(nx)\bigr) = -n + o(1) \xrightarrow[x\to 0^+]{} -n.$$
+**Cas polaire.** On pose $\varphi(r,\theta) = (r\cos\theta, r\sin\theta)$, défini sur $U = (0,+\infty)\times(0,2\pi)$ (ou tout intervalle de longueur $2\pi$ pour $\theta$). Le jacobien vaut :
 
-Donc $f_n(x) \to e^{-n}$ quand $x\to 0^+$.
+$$\det J_\varphi = \begin{vmatrix} \cos\theta & -r\sin\theta \\ \sin\theta & r\cos\theta \end{vmatrix} = r$$
 
-## Question 2
+Donc pour $f$ intégrable sur $V \subset \mathbb{R}^2$ :
 
-Pour $t\geq 0$, la fonction $g(t) = e^{-t} - (1-t)$ vérifie $g(0)=0$ et $g'(t) = -e^{-t}+1 \geq 0$, donc $g$ est croissante : $1-t \leq e^{-t}$.
-
-Pour $x>0$, $n\geq 0$ et $x\leq \frac{1}{n}$ (le cas $x>\frac{1}{n}$ donne $f_n(x)=0$) : on a $0 < 1-nx \leq 1$ et $\frac{1}{x}>0$, donc $f_n(x) = (1-nx)^{1/x} \geq 0$. De plus, en appliquant $1-t\leq e^{-t}$ avec $t=nx$ :
-
-$$(1-nx)^{1/x} \leq (e^{-nx})^{1/x} = e^{-n}.$$
-
-Donc $0 \leq f_n(x) \leq e^{-n}$ pour tout $x\in\mathbb{R}_+^*$, $n\geq 0$.
-
-## Question 3
-
-On a montré $\sup_{x\in\mathbb{R}_+^*} |f_n(x)| \leq e^{-n}$, et en posant $f_n(0)=e^{-n}$, cette borne vaut aussi en 0. Donc $\|f_n\|_\infty \leq e^{-n}$ sur $\mathbb{R}_+$.
-
-La série $\sum_{n=0}^{+\infty} e^{-n} = \frac{1}{1-e^{-1}} < +\infty$, donc $\sum f_n$ converge normalement sur $\mathbb{R}_+$.
-
-## Question 4
-
-La convergence normale implique la convergence uniforme sur $\mathbb{R}_+$, donc on peut intervertir limite et somme :
-
-$$\lim_{k\to\infty} \sum_{n=0}^{+\infty} f_n\!\left(\tfrac{1}{k}\right) = \sum_{n=0}^{+\infty} \lim_{k\to\infty} f_n\!\left(\tfrac{1}{k}\right) = \sum_{n=0}^{+\infty} f_n(0) = \sum_{n=0}^{+\infty} e^{-n} = \frac{1}{1-e^{-1}} = S(0).$$
-
-(L'interversion limite/somme est licite grâce à la convergence uniforme : $\lim_{k\to\infty} S(1/k) = S(0)$ par continuité de $S$, car chaque $f_n$ prolongée est continue en 0.)
-
-$$S(0) = \frac{1}{1-e^{-1}} = \frac{e}{e-1}.$$
-
-## Question 5
-
-On calcule $\sum_{n=0}^{+\infty} f_n\!\left(\frac{1}{k}\right)$. Pour $n \leq k-1$, $\frac{1}{k} \leq \frac{1}{n}$ (pour $n\geq 1$), donc $f_n(1/k) = \left(1-\frac{n}{k}\right)^k$. Pour $n\geq k$, $f_n(1/k)=0$. Pour $n=0$, $f_0(1/k)=1$.
-
-Donc :
-
-$$\sum_{n=0}^{+\infty} f_n\!\left(\frac{1}{k}\right) = 1 + \sum_{n=1}^{k-1}\left(1-\frac{n}{k}\right)^k = \sum_{n=0}^{k-1}\left(\frac{k-n}{k}\right)^k.$$
-
-En effectuant le changement d'indice $j = k-n$ (i.e. $n = k-j$, $j$ va de 1 à $k$) :
-
-$$\sum_{n=0}^{k-1}\left(\frac{k-n}{k}\right)^k = \sum_{j=1}^{k}\left(\frac{j}{k}\right)^k = \frac{1^k + 2^k + \cdots + k^k}{k^k}.$$
-
-Mais le terme $j=k$ vaut $1$, et d'après la question 4 :
-
-$$\lim_{k\to\infty} \frac{1^k + 2^k + \cdots + k^k}{k^k} = \frac{e}{e-1}.$$
-
-On veut $\lim_{k\to\infty}\frac{1^k+2^k+\cdots+(k-1)^k}{k^k}$. On a :
-
-$$\frac{1^k+2^k+\cdots+(k-1)^k}{k^k} = \frac{1^k+2^k+\cdots+k^k}{k^k} - 1.$$
-
-Donc :
-
-$$\lim_{k\to\infty}\frac{1^k+2^k+\cdots+(k-1)^k}{k^k} = \frac{e}{e-1} - 1 = \frac{e-(e-1)}{e-1} = \boxed{\frac{1}{e-1}}.$$
+$$\iint_V f(x,y)\, dx\, dy = \iint_{\varphi^{-1}(V)} f(r\cos\theta, r\sin\theta)\, r\, dr\, d\theta$$
 
 ---
 
-# Exercice 3
+## Exercice 2
 
-## Question 1
+On pose $f(x) = e^{-x}\mathbf{1}_{x>0}$ et $g(x) = \mathbf{1}_{[0,1]}(x)$.
 
-$f$ est impaire, $2\pi$-périodique, vaut $1$ sur $(0,\pi)$, $0$ en $0$ et $\pi$, $-1$ sur $(-\pi,0)$.
+### Question 1
 
-Sur $[-2\pi,2\pi]$ : créneaux de hauteur $+1$ sur $(-2\pi,-\pi)$, $0$ aux multiples de $\pi$... Non : $f$ est impaire donc vaut $-1$ sur $(-\pi,0)$, $+1$ sur $(0,\pi)$, $-1$ sur $(\pi,2\pi)$ (par $2\pi$-périodicité : $f(\pi+x)=f(-\pi+x)=f(x-\pi)$, et pour $x\in(0,\pi)$, $x-\pi\in(-\pi,0)$ donc $f(x-\pi)=-1$), $+1$ sur $(-2\pi,-\pi)$.
+$f \in L^1(\mathbb{R})$ car $\int_0^{+\infty} e^{-x}dx = 1 < \infty$, et $f \in L^\infty(\mathbb{R})$ car $f \leq 1$. De même $g \in L^1(\mathbb{R}) \cap L^\infty(\mathbb{R})$. Par la propriété de convolution : $f, g \in L^1 \Rightarrow f*g \in L^1(\mathbb{R})$, et $\|f*g\|_{L^\infty} \leq \|f\|_{L^1}\|g\|_{L^\infty} = 1 < \infty$, donc $f*g \in L^1 \cap L^\infty(\mathbb{R})$.
 
-La représentation est un signal créneau : rectangles alternés de hauteur $\pm 1$, nuls aux entiers multiples de $\pi$.
+### Question 2
 
-## Question 2
+Par définition, $f*g(x) = \int_{\mathbb{R}} f(x-t)g(t)\,dt = \int_0^1 e^{-(x-t)}\mathbf{1}_{x-t>0}\,dt = \int_0^1 e^{-(x-t)}\mathbf{1}_{t<x}\,dt$.
 
-Comme $f$ est impaire, $a_n = 0$ pour tout $n\geq 0$.
+**Cas $x < 0$ :** La condition $t < x < 0$ avec $t \in [0,1]$ est impossible. Donc $f*g(x) = 0$.
 
-$$b_n = \frac{1}{\pi}\int_{-\pi}^{\pi} f(x)\sin(nx)\,dx = \frac{2}{\pi}\int_0^{\pi}\sin(nx)\,dx.$$
+**Cas $0 \leq x \leq 1$ :** $t \in [0,\min(x,1)] = [0,x]$, donc :
 
-Pour $n=0$ : $b_0=0$. Pour $n\geq 1$ :
+$$f*g(x) = \int_0^x e^{-(x-t)}\,dt = e^{-x}\int_0^x e^t\,dt = e^{-x}(e^x - 1) = 1 - e^{-x}$$
 
-$$b_n = \frac{2}{\pi}\left[-\frac{\cos(nx)}{n}\right]_0^{\pi} = \frac{2}{\pi n}(1-\cos(n\pi)) = \frac{2(1-(-1)^n)}{\pi n}.$$
+**Cas $x > 1$ :** $t \in [0,1]$ (entièrement contenu dans $(-\infty, x)$), donc :
 
-Donc $b_n = \frac{4}{\pi n}$ si $n$ est impair, $b_n = 0$ si $n$ est pair.
+$$f*g(x) = \int_0^1 e^{-(x-t)}\,dt = e^{-x}\int_0^1 e^t\,dt = e^{-x}(e-1)$$
 
-**$a_n = 0$ pour tout $n$, $b_n = 0$ si $n$ pair, $b_n = \frac{4}{\pi n}$ si $n$ impair.**
+### Question 3
 
-## Question 3
+- Pour $x < 0$ : $f*g(x) = 0$.
+- Sur $[0,1]$ : $1 - e^{-x}$ croît de $0$ à $1 - e^{-1}$.
+- Pour $x > 1$ : $e^{-x}(e-1)$ décroît vers $0$, avec valeur en $x=1$ : $e^{-1}(e-1) = 1 - e^{-1}$.
 
-$f$ est $2\pi$-périodique, de classe $C^1$ par morceaux. En tout point $x$, la série de Fourier converge vers $\frac{f(x^+)+f(x^-)}{2}$.
+Le graphe est nul sur $(-\infty, 0)$, croît continûment de $0$ à $1-e^{-1}$ sur $[0,1]$, puis décroît vers $0$ pour $x > 1$.
 
-- En $x=0,\pi$ (et multiples de $\pi$) : $\frac{f(0^+)+f(0^-)}{2} = \frac{1+(-1)}{2}=0 = f(0)$. ✓
-- En $x\in(0,\pi)$ : $f$ est continue et vaut $1$, la série converge vers $1=f(x)$. ✓
-- Par imparité et périodicité, la convergence vers $f(x)$ est vérifiée partout.
+**Continuité :** En $x = 0$ : $\lim_{x\to 0^+}(1-e^{-x}) = 0 = f*g(0^-)$. ✓  
+En $x = 1$ : $\lim_{x\to 1^-}(1-e^{-1}) = 1 - e^{-1} = e^{-1}(e-1)$. ✓  
+Donc $f*g$ est **continue** sur $\mathbb{R}$.
 
-Donc pour tout $x\in\mathbb{R}$ :
+### Question 4
 
-$$f(x) = \sum_{n=0}^{+\infty}\frac{4}{\pi(2n+1)}\sin((2n+1)x).$$
+Notons $h = f*g$. On majore $|h(x)| \leq \min(1, e^{-x}(e-1))$. On veut montrer que $(1+x^2)h \in L^1(\mathbb{R})$.
 
-**Convergence uniforme :** Le terme général est $\frac{4}{\pi(2n+1)}$, indépendant de $x$, et $\sum \frac{1}{2n+1}$ diverge. De plus, en $x=\pi/2$, la série vaut $\sum \frac{4}{\pi(2n+1)}(-1)^n$ qui converge (Leibniz), mais la convergence n'est pas uniforme sur $\mathbb{R}$ car $f$ est discontinue (le phénomène de Gibbs empêche la convergence uniforme, et plus formellement : la somme partielle d'une série de fonctions continues convergeant uniformément serait continue, or $f$ ne l'est pas). **La série ne converge pas uniformément sur $\mathbb{R}$.**
+- Sur $(-\infty, 0)$ : $(1+x^2)h(x) = 0$, pas de problème.
+- Sur $[0,1]$ : $(1+x^2)(1-e^{-x}) \leq 2 \cdot 1$, intégrable sur $[0,1]$.
+- Sur $(1,+\infty)$ : $(1+x^2)e^{-x}(e-1) \leq C(1+x^2)e^{-x}$, qui est intégrable sur $(1,+\infty)$ car $e^{-x}$ décroît plus vite que tout polynôme.
 
-## Question 4
+Donc $(x \mapsto (1+x^2)h(x)) \in L^1(\mathbb{R})$.
 
-On applique la formule en $x = \frac{\pi}{2}$ : $f(\pi/2)=1$ et $\sin((2n+1)\frac{\pi}{2}) = (-1)^n$, donc :
+Par le théorème de régularité de la transformée de Fourier : si $(1+|\xi|^2)\hat{h} \in L^1$... En fait on utilise le critère direct : $h \in L^1(\mathbb{R})$ et $(1+x^2)h(x) \in L^1(\mathbb{R})$ implique que $\hat{h} \in C^2(\mathbb{R})$, ce qui équivaut à dire que $\widehat{f*g} \in C^2$... 
 
-$$1 = \sum_{n=0}^{+\infty}\frac{4}{\pi(2n+1)}(-1)^n \implies \sum_{n=0}^{+\infty}\frac{(-1)^n}{2n+1} = \frac{\pi}{4}.$$
+Plus précisément : puisque $x \mapsto x^k h(x) \in L^1(\mathbb{R})$ pour $k = 0, 1, 2$ (car $(1+x^2)h(x) \in L^1$), le théorème de dérivation sous le signe intégrale pour la transformée de Fourier donne que $\xi \mapsto \widehat{h}(\xi)$ est $C^2$. Donc $\widehat{f*g}$ est de classe $C^2(\mathbb{R})$.
 
-## Question 5
+### Question 5
 
-Sur $[\varepsilon, \pi-\varepsilon]$, $f$ est continue (elle vaut $1$ identiquement) et de classe $C^1$. Les extrema locaux de $f$ sur cet intervalle sont atteints aux bords, qui s'éloignent des discontinuités. On invoque le **théorème de Dirichlet uniforme sur un compact éloigné des discontinuités** : si $f$ est $C^1$ par morceaux et que $[\varepsilon,\pi-\varepsilon]$ ne contient aucune discontinuité (ce qui est le cas pour $\varepsilon\in]0,\pi/2[$, car les discontinuités sont en $0$ et $\pi$), alors la série de Fourier converge uniformément sur $[\varepsilon,\pi-\varepsilon]$.
+**Calcul de $\hat{f}(\xi)$ :**
 
-Plus précisément, le cours établit que sur tout intervalle compact ne contenant pas de discontinuité de $f$, la convergence est uniforme (ce résultat est démontré en cours via l'estimation des noyaux de Dirichlet ou par le critère de Dirichlet uniforme).
+$$\hat{f}(\xi) = \int_0^{+\infty} e^{-x}e^{-i\xi x}\,dx = \int_0^{+\infty} e^{-(1+i\xi)x}\,dx = \frac{1}{1+i\xi}$$
 
-## Question 6
+**Calcul de $\hat{g}(\xi)$ :** Pour $\xi \neq 0$ :
 
-La série $\sum_{n=0}^{+\infty}\frac{4}{\pi(2n+1)}\sin((2n+1)x)$ converge uniformément sur $[\varepsilon,\pi-\varepsilon]$ (Q5), et chaque terme est $C^1$. Les dérivées terme à terme sont $\frac{4}{\pi(2n+1)}\cdot(2n+1)\cos((2n+1)x) = \frac{4}{\pi}\cos((2n+1)x)$.
+$$\hat{g}(\xi) = \int_0^1 e^{-i\xi t}\,dt = \left[\frac{e^{-i\xi t}}{-i\xi}\right]_0^1 = \frac{1 - e^{-i\xi}}{i\xi}$$
 
-Or $\left|\frac{4}{\pi}\cos((2n+1)x)\right|\leq\frac{4}{\pi}$ et $\sum \frac{4}{\pi}$ diverge : la série des dérivées n'est pas normalement convergente en général. Il faut un argument plus fin.
+On factorise : $1 - e^{-i\xi} = e^{-i\xi/2}(e^{i\xi/2} - e^{-i\xi/2}) = 2i\sin(\xi/2)e^{-i\xi/2}$, donc :
 
-On procède différemment : on considère la série $\sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)$.
+$$\hat{g}(\xi) = \frac{2i\sin(\xi/2)e^{-i\xi/2}}{i\xi} = \frac{2\sin(\xi/2)}{\xi}e^{-i\xi/2}$$
 
-**Convergence uniforme sur $[\varepsilon,\pi-\varepsilon]$ :** On a $\left|\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)\right|\leq \frac{4}{\pi(2n+1)^2}$ et $\sum \frac{1}{(2n+1)^2}<+\infty$, donc la série converge **normalement** (et en particulier uniformément) sur $[\varepsilon,\pi-\varepsilon]$.
+**Calcul de $\widehat{f*g}(\xi)$ :**
 
-**Identification de la somme :** On applique le **théorème de dérivation des séries de fonctions** : la série $\sum \frac{4}{\pi(2n+1)}\sin((2n+1)x)$ converge uniformément sur $[\varepsilon,\pi-\varepsilon]$ vers $f(x)=1$, et la série dérivée terme à terme $\sum \frac{4}{\pi}\cos((2n+1)x)$... Hmm, la série dérivée ne converge pas normalement.
+$$\widehat{f*g}(\xi) = \hat{f}(\xi)\cdot\hat{g}(\xi) = \frac{1}{1+i\xi}\cdot\frac{2\sin(\xi/2)}{\xi}e^{-i\xi/2}$$
 
-On procède dans l'autre sens : posons $g(x) = \sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)$, qui converge normalement sur $\mathbb{R}$. Chaque terme est $C^1$ et sa dérivée est $\frac{4}{\pi(2n+1)}\sin((2n+1)x)$. La série des dérivées converge uniformément sur $[\varepsilon,\pi-\varepsilon]$ vers $f(x)=1$ (Q5). Donc par le théorème de dérivation :
+On rationalise $\dfrac{1}{1+i\xi} = \dfrac{1-i\xi}{1+\xi^2}$, d'où :
 
-$$g'(x) = \sum_{n=0}^\infty \frac{4}{\pi(2n+1)}\sin((2n+1)x) = f(x) = 1 \quad \text{sur } [\varepsilon,\pi-\varepsilon].$$
+$$\boxed{\widehat{f*g}(\xi) = \frac{2(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}e^{-i\xi/2}}$$
 
-Ainsi $g(x) = x + C$ sur $[\varepsilon,\pi-\varepsilon]$ pour une constante $C$. En $x=\frac{\pi}{2}$ :
+### Question 6
 
-$$g\!\left(\tfrac{\pi}{2}\right) = \sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos\!\left((2n+1)\tfrac{\pi}{2}\right) = 0$$
+On applique la formule d'inversion de Fourier. On a montré que $\widehat{f*g} \in L^1(\mathbb{R})$ (car $\widehat{f*g}(\xi) = \hat{f}(\xi)\hat{g}(\xi)$ avec $\hat{f} \in L^2$ et $\hat{g} \in L^2$, mais plus directement : $|\widehat{f*g}(\xi)| \leq C(1+|\xi|)^{-2}$ pour $|\xi|$ grand, ce qui donne $\widehat{f*g} \in L^1$). De plus $f*g \in L^1$ et est continue. Donc la formule d'inversion s'applique :
 
-car $\cos((2n+1)\pi/2)=0$ pour tout $n$. Donc $C = -\frac{\pi}{2}$, d'où :
+$$f*g(x) = \frac{1}{2\pi}\int_{\mathbb{R}} \widehat{f*g}(\xi)\,e^{i\xi x}\,d\xi$$
 
-$$\sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x) = x - \frac{\pi}{2} \quad \text{sur } [\varepsilon,\pi-\varepsilon].$$
+On choisit $x = 0$ : $f*g(0) = 0$ et $e^{i\xi \cdot 0} = 1$, donc :
 
-## Question 7
+$$0 = \frac{1}{2\pi}\int_{\mathbb{R}} \frac{2(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}e^{-i\xi/2}\,d\xi$$
 
-La série $\sum_{n=0}^\infty \frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)$ vérifie :
+On choisit plutôt $x = \frac{1}{2}$ (point symétrique) : $f*g(1/2) = 1 - e^{-1/2}$ et $e^{i\xi/2}$ :
 
-$$\sup_{x\in[0,\pi]}\left|\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x)\right| \leq \frac{4}{\pi(2n+1)^2},$$
+$$1 - e^{-1/2} = \frac{1}{2\pi}\int_{\mathbb{R}} \frac{2(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}\,d\xi$$
 
-et $\sum_{n=0}^\infty \frac{4}{\pi(2n+1)^2} < +\infty$ (série de Riemann, $p=2>1$). Donc la série converge **normalement sur $[0,\pi]$**, donc uniformément.
+Séparons partie réelle et imaginaire. La partie imaginaire de $\dfrac{(1-i\xi)\sin(\xi/2)}{\xi(1+\xi^2)}$ est $\dfrac{-\xi \sin(\xi/2)}{\xi(1+\xi^2)} = \dfrac{-\sin(\xi/2)}{1+\xi^2}$, qui est une fonction impaire, donc son intégrale sur $\mathbb{R}$ est nulle. La partie réelle est $\dfrac{\sin(\xi/2)}{\xi(1+\xi^2)}$, qui est paire. Donc :
 
-La somme $g(x) = x-\frac{\pi}{2}$ a été établie sur $[\varepsilon,\pi-\varepsilon]$ pour tout $\varepsilon\in]0,\pi/2[$, donc sur $\bigcup_{\varepsilon>0}[\varepsilon,\pi-\varepsilon] = (0,\pi)$. Par convergence uniforme sur $[0,\pi]$ et continuité de $x\mapsto x-\frac{\pi}{2}$, on étend l'égalité à $[0,\pi]$ par passage à la limite :
+$$1 - e^{-1/2} = \frac{1}{2\pi}\cdot 2 \int_{\mathbb{R}} \frac{\sin(\xi/2)}{\xi(1+\xi^2)}\,d\xi$$
 
-$$\sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2}\cos((2n+1)x) = x - \frac{\pi}{2} \quad \text{sur } [0,\pi].$$
+D'où :
 
-## Question 8
+$$\boxed{I = \int_{\mathbb{R}} \frac{\sin(\xi/2)}{\xi(1+\xi^2)}\,d\xi = \pi(1 - e^{-1/2})}$$
 
-**Calcul de $\sum_{n=0}^\infty \frac{1}{(2n+1)^2}$ :** On évalue en $x=0$ :
+---
 
-$$\sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2}\cos(0) = 0 - \frac{\pi}{2} \implies \sum_{n=0}^{+\infty}\frac{-4}{\pi(2n+1)^2} = -\frac{\pi}{2} \implies \sum_{n=0}^{+\infty}\frac{1}{(2n+1)^2} = \frac{\pi^2}{8}.$$
+## Exercice 3
 
-**Calcul de $\sum_{n=1}^\infty \frac{1}{n^2}$ :** On décompose selon la parité :
+### Question 1
 
-$$\sum_{n=1}^{\infty}\frac{1}{n^2} = \sum_{n=0}^{\infty}\frac{1}{(2n+1)^2} + \sum_{n=1}^{\infty}\frac{1}{(2n)^2} = \frac{\pi^2}{8} + \frac{1}{4}\sum_{n=1}^{\infty}\frac{1}{n^2}.$$
+Pour $t > 0$ et $x \in \mathbb{R}$, on a $|\cos(xt)| \leq 1$, et par l'inégalité des accroissements finis (ou le développement $e^{-2t} - e^{-3t} = te^{-ct}$ pour un $c \in (2,3)$) :
 
-Donc $\frac{3}{4}\sum_{n=1}^\infty \frac{1}{n^2} = \frac{\pi^2}{8}$, d'où :
+$$\left|\frac{e^{-2t}-e^{-3t}}{t}\right| \leq \frac{e^{-2t}+e^{-3t}}{t}$$
 
-$$\sum_{n=1}^{+\infty}\frac{1}{n^2} = \frac{\pi^2}{6}.$$
+En $t \to 0^+$ : $\dfrac{e^{-2t}-e^{-3t}}{t} \to -2 - (-3) = 1$ (limite finie), donc l'intégrande est bornée au voisinage de $0$.
+
+En $+\infty$ : $\left|\dfrac{e^{-2t}-e^{-3t}}{t}\cos(xt)\right| \leq e^{-2t}$, intégrable.
+
+Donc l'intégrale est absolument convergente pour tout $x \in \mathbb{R}$.
+
+### Question 2
+
+On pose $\varphi(x,t) = \dfrac{e^{-2t}-e^{-3t}}{t}\cos(xt)$. On a $\partial_x \varphi = -\dfrac{e^{-2t}-e^{-3t}}{t}\cdot t \sin(xt) = -(e^{-2t}-e^{-3t})\sin(xt)$.
+
+Le majorant $|(e^{-2t}-e^{-3t})\sin(xt)| \leq e^{-2t}+e^{-3t}$ est intégrable sur $(0,+\infty)$, uniformément en $x$. Par le théorème de dérivation sous le signe intégrale, $F \in C^1(\mathbb{R})$ et :
+
+$$F'(x) = -\int_0^{+\infty}(e^{-2t}-e^{-3t})\sin(xt)\,dt$$
+
+En utilisant l'indication $\sin(xt) = \mathrm{Im}(e^{ixt})$ :
+
+$$\int_0^{+\infty} e^{-at}\sin(xt)\,dt = \mathrm{Im}\int_0^{+\infty}e^{-(a-ix)t}\,dt = \mathrm{Im}\frac{1}{a-ix} = \mathrm{Im}\frac{a+ix}{a^2+x^2} = \frac{x}{a^2+x^2}$$
+
+pour $a > 0$. Donc :
+
+$$F'(x) = -\left(\frac{x}{4+x^2} - \frac{x}{9+x^2}\right) = \frac{-x}{4+x^2} + \frac{x}{9+x^2}$$
+
+### Question 3
+
+On intègre $F'(x)$ :
+
+$$F(x) = -\frac{1}{2}\ln(4+x^2) + \frac{1}{2}\ln(9+x^2) + C = \frac{1}{2}\ln\!\left(\frac{9+x^2}{4+x^2}\right) + C$$
+
+### Question 4
+
+Par le lemme de Riemann-Lebesgue, pour $t > 0$ fixé, $\cos(xt) \to 0$ quand $x \to \pm\infty$. Plus précisément, en appliquant le lemme de Riemann-Lebesgue à $h(t) = \dfrac{e^{-2t}-e^{-3t}}{t}\mathbf{1}_{(0,+\infty)}(t) \in L^1(\mathbb{R})$ (vérifié à la question 1) :
+
+$$F(x) = \int_0^{+\infty} h(t)\cos(xt)\,dt \xrightarrow[|x|\to+\infty]{} 0$$
+
+Donc $\displaystyle\lim_{|x|\to+\infty} F(x) = 0$.
+
+On en déduit $C$ : $\dfrac{1}{2}\ln\!\left(\dfrac{9+x^2}{4+x^2}\right) \to \dfrac{1}{2}\ln(1) = 0$ quand $x \to \infty$. Donc $C = 0$ et :
+
+$$\boxed{F(x) = \frac{1}{2}\ln\!\left(\frac{9+x^2}{4+x^2}\right)}$$
+
+---
+
+## Exercice 4
+
+### Question 1 — Domaine $\Omega$
+
+$\Omega = \{(x,y) \in \mathbb{R}^2 : x \geq 0,\ y \geq 0,\ x^2+y^2 \geq 1,\ x+y \leq 2\}$.
+
+C'est la région du premier quadrant, à l'extérieur du disque unité, sous la droite $x+y=2$.
+
+*(Domaine hachuré sur le dessin : premier quadrant, entre le quart de cercle de rayon 1 et le segment de droite $x+y=2$.)*
+
+### Question 2 — Décomposition du bord
+
+Le bord $\partial\Omega$ se décompose en trois arcs (orientés dans le sens direct, i.e. le domaine est à gauche) :
+
+- $\Gamma_1$ : arc de cercle $x^2+y^2 = 1$, $x \geq 0$, $y \geq 0$ (quart de cercle unité dans le premier quadrant).
+- $\Gamma_2$ : segment sur l'axe $y = 0$, de $(2,0)$ à $(1,0)$, i.e. $\{(x,0) : 1 \leq x \leq 2\}$.
+- $\Gamma_3$ : segment $x + y = 2$, $x \geq 0$, $y \geq 0$, i.e. $\{(x, 2-x) : 0 \leq x \leq 2\}$.
+- $\Gamma_4$ : segment sur l'axe $x = 0$, de $(0,2)$ à $(0,1)$, i.e. $\{(0,y) : 1 \leq y \leq 2\}$.
+
+Soit $n = 4$.
+
+**Sens direct (domaine à gauche) :**
+- $\Gamma_1$ : du point $(1,0)$ vers $(0,1)$ (sens trigonométrique).
+- $\Gamma_2$ : de $(2,0)$ vers $(1,0)$.
+- $\Gamma_3$ : de $(0,2)$ vers $(2,0)$.
+- $\Gamma_4$ : de $(0,1)$ vers $(0,2)$.
+
+*(Correction : le bord parcouru dans le sens direct — domaine à gauche — suit l'ordre $\Gamma_2 \to \Gamma_1$ inversé... Précisons soigneusement.)*
+
+Le bord orienté positivement (sens direct = domaine à gauche) est :
+
+$\Gamma_3$ de $(2,0)$ à $(0,2)$, puis $\Gamma_4$ de $(0,2)$ à $(0,1)$, puis $\Gamma_1$ de $(0,1)$ à $(1,0)$ (sens trigonométrique sur le cercle), puis $\Gamma_2$ de $(1,0)$ à $(2,0)$.
+
+### Question 3 — Paramétrage
+
+- $\gamma_3(t) = (t, 2-t)$, $t$ de $0$ à $2$ (le long de $x+y=2$, de $(0,2)$ à... attendez, sens direct).
+
+Reprenons avec l'orientation directe (intérieur à gauche) :
+
+- $\gamma_2(t) = (t, 0)$, $t \in [1, 2]$, parcouru de $t=1$ à $t=2$ (**de $(1,0)$ à $(2,0)$**). — *axe $y=0$, vers la droite : intérieur du domaine est au-dessus, donc à gauche. ✓*
+- $\gamma_3(t) = (2-t, t)$, $t \in [0,2]$, de $(2,0)$ à $(0,2)$ — *(le long de $x+y=2$ : intérieur est en bas-gauche, donc à gauche quand on marche vers $(0,2)$. ✓)*
+- $\gamma_4(t) = (0, 2-t)$, $t \in [0,1]$, de $(0,2)$ à $(0,1)$ — *(axe $x=0$, vers le bas : intérieur à droite... ✗)*
+
+Raisonnons globalement : $\Omega$ est borné, convexe, dans le premier quadrant. La frontière orientée positivement (sens trigonométrique global autour de $\Omega$) est :
+
+- $\gamma_2(t) = (t, 0)$, $t \in [1, 2]$ : de $(1,0)$ à $(2,0)$.
+- $\gamma_3(t) = (2-t, t)$, $t \in [0, 2]$ : de $(2,0)$ à $(0,2)$.
+- $\gamma_4(t) = (0, 2-t)$, $t \in [0, 1]$ : de $(0,2)$ à $(0,1)$.
+- $\gamma_1(t) = (\cos t, \sin t)$, $t \in [0, \pi/2]$, parcouru **de $\pi/2$ à $0$**, i.e. $\gamma_1(t) = (\sin t, \cos t)$, $t \in [0, \pi/2]$ : de $(0,1)$ à $(1,0)$.
+
+En résumé :
+
+$$\gamma_1(t) = (\sin t, \cos t),\quad t \in [0, \pi/2]$$
+
+$$\gamma_2(t) = (t, 0),\quad t \in [1, 2]$$
+
+$$\gamma_3(t) = (2-t, t),\quad t \in [0, 2]$$
+
+$$\gamma_4(t) = (0, 2-t),\quad t \in [0, 1]$$
+
+Le bord orienté positivement est $\gamma_2$, puis $\gamma_3$, puis $\gamma_4$, puis $\gamma_1$.
+
+### Question 4 — Green-Riemann et aire
+
+**Théorème de Green-Riemann.** Si $\vec{v} = (P, Q)$ est un champ $C^1$ sur $\overline{\Omega}$, alors :
+
+$$\oint_{\partial\Omega} P\,dx + Q\,dy = \iint_\Omega \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right)\,dx\,dy$$
+
+Pour calculer l'aire, on choisit $\vec{v} = (P,Q) = (0, x)$ (ou $(-y,0)$ ou $(-y/2, x/2)$), ce qui donne $\dfrac{\partial Q}{\partial x} - \dfrac{\partial P}{\partial y} = 1$.
+
+Donc :
+
+$$\mathrm{Aire}(\Omega) = \oint_{\partial\Omega} x\,dy$$
+
+On calcule sur chaque arc :
+
+**Sur $\gamma_1$** : $x = \sin t$, $y = \cos t$, $dy = -\sin t\,dt$, $t \in [0, \pi/2]$ :
+
+$$\int_{\gamma_1} x\,dy = \int_0^{\pi/2} \sin t \cdot (-\sin t)\,dt = -\int_0^{\pi/2}\sin^2 t\,dt = -\frac{\pi}{4}$$
+
+**Sur $\gamma_2$** : $x = t$, $y = 0$, $dy = 0$, $t \in [1,2]$ :
+
+$$\int_{\gamma_2} x\,dy = 0$$
+
+**Sur $\gamma_3$** : $x = 2-t$, $y = t$, $dy = dt$, $t \in [0,2]$ :
+
+$$\int_{\gamma_3} x\,dy = \int_0^2 (2-t)\,dt = \left[2t - \frac{t^2}{2}\right]_0^2 = 4 - 2 = 2$$
+
+**Sur $\gamma_4$** : $x = 0$, $dy = -dt$, $t \in [0,1]$ :
+
+$$\int_{\gamma_4} x\,dy = 0$$
+
+Donc :
+
+$$\mathrm{Aire}(\Omega) = -\frac{\pi}{4} + 0 + 2 + 0 = 2 - \frac{\pi}{4}$$
+
+### Question 5 — Calcul géométrique de l'aire
+
+Le domaine $\Omega$ est contenu dans le carré $[0,2]\times[0,2]$ limité par $x+y \leq 2$, donc dans le triangle $T$ de sommets $(0,0)$, $(2,0)$, $(0,2)$, d'aire $\dfrac{1}{2}\cdot 2 \cdot 2 = 2$.
+
+On retire de $T$ :
+- Le quart de disque unité $D$ dans le premier quadrant, d'aire $\dfrac{\pi}{4}$.
+- Les deux triangles rectangles sur les axes entre $0$ et $1$ sont déjà exclus par $x^2+y^2 \geq 1$... 
+
+Plus précisément : $T = \{x \geq 0, y \geq 0, x+y \leq 2\}$, aire $= 2$.  
+$\Omega = T \setminus \{x^2+y^2 \leq 1, x\geq 0, y\geq 0\}$.
+
+Le quart de disque unité dans le premier quadrant est entièrement contenu dans $T$ (car pour $x^2+y^2 \leq 1$, $x,y\geq 0$, on a $x+y \leq \sqrt{2}(x^2+y^2)^{1/2}\cdot \sqrt{2} \leq 2$... en fait $x+y \leq \sqrt{2} < 2$ par Cauchy-Schwarz).
+
+Donc :
+
+$$\mathrm{Aire}(\Omega) = \mathrm{Aire}(T) - \mathrm{Aire}(\text{quart de disque unité}) = 2 - \frac{\pi}{4}$$
+
+Ce qui confirme le résultat obtenu par Green-Riemann.
